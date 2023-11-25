@@ -19,8 +19,8 @@ jobs:
 
       - name: Build
         # build project
-        run: cmake --build ${{github.workspace}}/build --target VDSProject
-
-      - name: GoogleTest
-        # execute tests defined by the CMake configuration
         run: cmake --build ${{github.workspace}}/build --target VDSProject_test
+
+      - name: Test
+        # execute tests
+        run: ${{github.workspace}}/build/src/test/VDSProject_test

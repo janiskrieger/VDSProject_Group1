@@ -1,0 +1,25 @@
+name: CMake Build and GoogleTest
+
+on:
+  push:
+    branches: [ "*" ]
+    # branches: [ "master" ]
+  pull_request:
+    branches: [ "*" ]
+    # branches: [ "master" ]
+
+jobs:
+  build:
+    # run on ubuntu 22.04 LTS. Choosen for a stable CI pipeline
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        # build Project
+        run: cmake --build ${{github.workspace}}/build --target VDSProject
+
+      - name: GoogleTest
+        # execute tests defined by the CMake configuration
+        run: cmake --build ${{github.workspace}}/build --target VDSProject_test

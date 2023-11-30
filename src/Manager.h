@@ -6,16 +6,20 @@
 #define VDSPROJECT_MANAGER_H
 
 #include "ManagerInterface.h"
+#include <vector>
+#include <array>
 
 namespace ClassProject {
 
     class Manager : public ManagerInterface {
     private:
-
+        std::vector<std::array<int , 3> > uTable;
+        std::vector<std::string> topVarNameTable;
     public:
+        Manager();
         BDD_ID createVar(const std::string &label) override{}
-        const BDD_ID &True() override{}
-        const BDD_ID &False() override{}
+        const BDD_ID &True() override;
+        const BDD_ID &False() override;
         bool isConstant(BDD_ID f) override{}
         bool isVariable(BDD_ID x) override {}
         BDD_ID topVar(BDD_ID f) override {}

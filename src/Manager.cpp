@@ -21,4 +21,14 @@ namespace ClassProject{
         static const BDD_ID val = 0;
         return val;
     }
+
+    bool Manager::isConstant(BDD_ID f) {
+        return f == True() || f == False();
+    }
+
+    std::string Manager::getTopVarName(const BDD_ID &root) {
+        return topVarNameTable[root];
+    }
+
+
 }

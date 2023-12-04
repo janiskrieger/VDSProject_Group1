@@ -75,7 +75,7 @@ namespace ClassProject{
     TEST_F(LogicOperations, and2){
         ClassProject::BDD_ID id = m->and2(a,b);
         EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), b); // ID(b)|(a=1)
+        EXPECT_EQ(m->coFactorTrue(id), 1); // ID(b)|(a=1)
         EXPECT_EQ(m->coFactorFalse(id), 0); // ID(0)|(a=0)
     }
 

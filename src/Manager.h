@@ -5,7 +5,10 @@
 #ifndef VDSPROJECT_MANAGER_H
 #define VDSPROJECT_MANAGER_H
 
+#define DEBUG
+
 #include "ManagerInterface.h"
+#include <iostream>
 #include <vector>
 #include <array>
 
@@ -29,12 +32,12 @@ namespace ClassProject {
         bool isConstant(BDD_ID f) override;
         bool isVariable(BDD_ID x) override;
         BDD_ID topVar(BDD_ID f) override;
-        BDD_ID ite(BDD_ID i, BDD_ID t, BDD_ID e) override {}
-        BDD_ID coFactorTrue(BDD_ID f, BDD_ID x) override {}
-        BDD_ID coFactorFalse(BDD_ID f, BDD_ID x) override {}
-        BDD_ID coFactorTrue(BDD_ID f) override {}
-        BDD_ID coFactorFalse(BDD_ID f) override {}
-        BDD_ID and2(BDD_ID a, BDD_ID b) override {}
+        BDD_ID ite(BDD_ID i, BDD_ID t, BDD_ID e) override;
+        BDD_ID coFactorTrue(BDD_ID f, BDD_ID x) override;
+        BDD_ID coFactorFalse(BDD_ID f, BDD_ID x) override;
+        BDD_ID coFactorTrue(BDD_ID f) override;
+        BDD_ID coFactorFalse(BDD_ID f) override;
+        BDD_ID and2(BDD_ID a, BDD_ID b) override;
         BDD_ID or2(BDD_ID a, BDD_ID b) override {}
         BDD_ID xor2(BDD_ID a, BDD_ID b) override {}
         BDD_ID neg(BDD_ID a) override {}

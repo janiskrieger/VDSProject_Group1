@@ -22,6 +22,7 @@ namespace ClassProject {
         std::vector<std::string> topVarNameTable;
     public:
         Manager();
+        ~Manager() = default;
         BDD_ID createVar(const std::string &label) override;
         const BDD_ID &True() override;
         const BDD_ID &False() override;

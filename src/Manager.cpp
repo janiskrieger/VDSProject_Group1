@@ -11,11 +11,18 @@ namespace ClassProject{
         topVarNameTable.emplace_back("false");
         uTable.push_back({1,1,1});
         topVarNameTable.emplace_back("true");
+#ifdef DEBUG
+        std::cout << std::endl << "uTable: 0, 0, 0 ,0, true";
+        std::cout << std::endl << "uTable: 1, 1, 1 ,1, false";
+#endif
     }
 
     BDD_ID Manager::createVar(const std::string &label) {
         BDD_ID id = uniqueTableSize();
         uTable.push_back({1,0,id});
+#ifdef DEBUG
+        std::cout << std::endl << "uTable: " << id << ", 1, 0, " << id << ", " << label;
+#endif
         topVarNameTable.emplace_back(label);
         return id;
     }
@@ -42,8 +49,16 @@ namespace ClassProject{
     }
 
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
-        if (isConstant(i)){   // terminal case
+        // Terminal case of recursion (lecture slides 2-15)
+        // ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
+        if (i == True()){
+            return t;
+        } else if (i == False()){
+            return e;
+        } else if (t == True() and e == False()){
             return i;
+        } else if (t == e){
+            return t;
         } /*else if (computed table has entry for (f, g, h)){
             return i;   // eliminate repetitions in computations
         }*/
@@ -70,7 +85,10 @@ namespace ClassProject{
             }
             if (r == -1){   // no entry was found
                 r = uniqueTableSize();
-                uTable.push_back({x, rlow, rhigh});
+                uTable.push_back({rhigh, rlow, x});
+#ifdef DEBUG
+                std::cout << std::endl << "uTable: " << r << ", " << x << ", " << rlow << ", " << rhigh;
+#endif
             }
 
             //update_computed_table((f, g, h), r);
@@ -97,7 +115,7 @@ namespace ClassProject{
             return f;
         }
         if (topVar(f) == x){
-            return high(f);
+            return low(f);
         }
         else{
             BDD_ID T = coFactorFalse(high(f), x);

@@ -17,9 +17,6 @@ namespace ClassProject{
         BDD_ID id = uniqueTableSize();
         uTable.push_back({1,0,id});
         topVarNameTable.emplace_back(label);
-#ifdef DEBUG
-        std::cout << std::endl << "Created new variable " + label + " with ID: " << id;
-#endif
         return id;
     }
 
@@ -45,37 +42,35 @@ namespace ClassProject{
     }
 
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
-#ifdef DEBUG
-        std::cout << std::endl << "ITE(" << i << ", " << t << ", " << e << ")";
-#endif
-        if (isConstant(i) || isVariable(i)){   // terminal case
+        if (isConstant(i)){   // terminal case
             return i;
         } /*else if (computed table has entry for (f, g, h)){
             return i;   // eliminate repetitions in computations
         }*/
         else{
-            BDD_ID rhigh = ite(coFactorTrue(i), coFactorTrue(t), coFactorTrue(e));
-            BDD_ID rlow = ite(coFactorFalse(i), coFactorFalse(t), coFactorFalse(e));
+            // let x be the top-variable of (i, t, e)
+            BDD_ID x = topVar(i);
+            if (topVar(t) < x && isVariable(topVar(t)))
+                x = topVar(t);
+            if (topVar(e) < x && isVariable(topVar(e)))
+                x = topVar(e);
+
+            BDD_ID rhigh = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
+            BDD_ID rlow = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
             if (rhigh == rlow){ // reduction is possible
                 return rhigh;
             }
             // Find or add unique table and eliminate isomorphic sub-graphs
             ClassProject::BDD_ID r = -1;
             for (BDD_ID id=0; id < uniqueTableSize(); id++){
-                if (uTable[id][VTOPVAR] == topVar(i) && uTable[id][VHIGH] == t && uTable[id][VLOW] == e){
+                if (topVar(id) == topVar(i) && high(t) == t && low(id) == e){
                     r = id;
-#ifdef DEBUG
-                    std::cout << std::endl << "Found existing entry in unique table for ID: " << id;
-#endif
                     break;
                 }
             }
             if (r == -1){   // no entry was found
                 r = uniqueTableSize();
-                uTable.push_back({i,t,e});
-#ifdef DEBUG
-                std::cout << std::endl << "Adding new entry to unique table with ID: " << r;
-#endif
+                uTable.push_back({x, rlow, rhigh});
             }
 
             //update_computed_table((f, g, h), r);
@@ -84,35 +79,29 @@ namespace ClassProject{
     }
 
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x) {
-#ifdef DEBUG
-      std::cout << std::endl << "coFactorTrue(" << f << ", " << x << ")";
-#endif
         if (isConstant(f) || isConstant(x) || topVar(f) > x){    // terminal case
             return f;
         }
         if (topVar(f) == x){
-            return uTable[f][VHIGH];
+            return high(f);
         }
         else{
-            BDD_ID T = coFactorTrue(uTable[f][VHIGH], x);
-            BDD_ID F = coFactorTrue(uTable[f][VLOW], x);
+            BDD_ID T = coFactorTrue(high(f), x);
+            BDD_ID F = coFactorTrue(low(f), x);
             return ite(topVar(f), T, F);
         }
     }
 
     BDD_ID Manager::coFactorFalse(BDD_ID f, BDD_ID x) {
-#ifdef DEBUG
-        std::cout << std::endl << "coFactorFalse(" << f << ", " << x << ")";
-#endif
         if (isConstant(f) || isConstant(x) || topVar(f) > x){    // terminal case
             return f;
         }
         if (topVar(f) == x){
-            return uTable[f][VLOW];
+            return high(f);
         }
         else{
-            BDD_ID T = coFactorFalse(uTable[f][VHIGH], x);
-            BDD_ID F = coFactorFalse(uTable[f][VLOW], x);
+            BDD_ID T = coFactorFalse(high(f), x);
+            BDD_ID F = coFactorFalse(low(f), x);
             return ite(topVar(f), T, F);
         }
     }
@@ -131,6 +120,14 @@ namespace ClassProject{
 
     BDD_ID Manager::topVar(BDD_ID f) {
         return uTable[f][VTOPVAR];
+    }
+
+    BDD_ID Manager::low(BDD_ID f){
+        return uTable[f][VLOW];
+    }
+
+    BDD_ID Manager::high(BDD_ID f){
+        return uTable[f][VHIGH];
     }
 
     std::string Manager::getTopVarName(const BDD_ID &root) {

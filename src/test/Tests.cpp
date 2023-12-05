@@ -6,14 +6,14 @@
 namespace ClassProject{
     class LogicOperations : public ::testing::Test{
     protected:
-        ClassProject::Manager *m;
-        ClassProject::BDD_ID a;
-        ClassProject::BDD_ID b;
-        ClassProject::BDD_ID c;
-        ClassProject::BDD_ID d;
+        Manager *m;
+        BDD_ID a;
+        BDD_ID b;
+        BDD_ID c;
+        BDD_ID d;
 
         void SetUp() override{
-            m = new ClassProject::Manager();
+            m = new Manager();
             a = m->createVar("a");  // ID 2
             b = m->createVar("b");  // ID 3
             c = m->createVar("c");  // ID 4
@@ -27,26 +27,26 @@ namespace ClassProject{
 
     TEST(ManagerTest, createVar){
         // Creates a new variable with the given label and returns its ID.
-        ClassProject::Manager m = ClassProject::Manager();
+        Manager m = Manager();
         EXPECT_EQ(m.createVar("a"), 2);
         EXPECT_EQ(m.createVar("b"), 3);
     }
 
     TEST(ManagerTest, True) {
         // Returns the ID of the True node.
-        ClassProject::Manager m;
+        Manager m;
         EXPECT_EQ(m.True(), 1);
     }
 
     TEST(ManagerTest, False) {
         // Returns the ID of the False node.
-        ClassProject::Manager m;
+        Manager m;
         EXPECT_EQ(m.False(), 0);
     }
 
     TEST(ManagerTest, isConstant){
         // Returns true, if the given ID represents a leaf node.
-        ClassProject::Manager m = ClassProject::Manager();
+        Manager m = Manager();
         m.createVar("a");   // ID: 2
 
         EXPECT_EQ(m.isConstant(0), true);
@@ -56,32 +56,35 @@ namespace ClassProject{
 
     TEST(ManagerTest, isVariable){
         // Creates a new variable with the given label and returns its ID.
-        ClassProject::Manager m = ClassProject::Manager();
-        m.createVar("a");   // ID: 2
-        m.createVar("b");   // ID: 3
+        Manager m = Manager();
+        BDD_ID a = m.createVar("a");
+        BDD_ID b = m.createVar("b");
+        BDD_ID aandb = m.and2(a,b);
 
         EXPECT_EQ(m.isVariable(1), false);
-        EXPECT_EQ(m.isVariable(2), true);
-        EXPECT_EQ(m.isVariable(3), true);
+        EXPECT_EQ(m.isVariable(a), true);
+        EXPECT_EQ(m.isVariable(b), true);
+        EXPECT_EQ(m.isVariable(aandb), false);
+
     }
 
     TEST(ManagerTest, getTopVarName){
         // Returns the label of the given BDD_ID.
-        ClassProject::Manager m = ClassProject::Manager();
+        Manager m = Manager();
         EXPECT_EQ(m.getTopVarName(0), "false");
         EXPECT_EQ(m.getTopVarName(1), "true");
     }
 
     TEST_F(LogicOperations, and2){
-        ClassProject::BDD_ID id = m->and2(a,b);
+        BDD_ID id = m->and2(a,b);
         EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), 1); // ID(b)|(a=1)
-        EXPECT_EQ(m->coFactorFalse(id), 0); // ID(0)|(a=0)
+        EXPECT_EQ(m->coFactorTrue(id), b);
+        EXPECT_EQ(m->coFactorFalse(id), 0);
     }
 
     TEST(ManagerTest, uniqueTableSize){
         // Returns the number of nodes currently existing in the unique table of the Manager class.
-        ClassProject::Manager m = ClassProject::Manager();
+        Manager m = Manager();
         EXPECT_EQ(m.uniqueTableSize(), 2);
 
         m.createVar("a");

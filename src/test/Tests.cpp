@@ -75,12 +75,64 @@ namespace ClassProject{
         EXPECT_EQ(m.getTopVarName(1), "true");
     }
 
+    // AND2 operation
     TEST_F(LogicOperations, and2){
         BDD_ID id = m->and2(a,b);
         EXPECT_EQ(m->topVar(id), a);
         EXPECT_EQ(m->coFactorTrue(id), b);
         EXPECT_EQ(m->coFactorFalse(id), 0);
     }
+
+    // OR2 operation
+    TEST_F(LogicOperations, or2) {
+        BDD_ID id = m->or2(a, b);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id), 1);
+        EXPECT_EQ(m->coFactorFalse(id), b);
+    }
+
+    // XOR2 operation
+    TEST_F(LogicOperations, xor2) {
+        BDD_ID id = m->xor2(a, b);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id), m->neg(b));
+        EXPECT_EQ(m->coFactorFalse(id), b);
+    }
+
+    // NEG operation
+    TEST_F(LogicOperations, neg) {
+        BDD_ID id = m->neg(a);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id), 0);
+        EXPECT_EQ(m->coFactorFalse(id), 1);
+    }
+
+    // NAND2 operation
+    TEST_F(LogicOperations, nand2) {
+        BDD_ID id = m->nand2(a,b);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id), m->neg(b));
+        EXPECT_EQ(m->coFactorFalse(id), 1);
+    }
+
+    // NOR2 operation
+    TEST_F(LogicOperations, nor2) {
+        BDD_ID id = m->nor2(a,b);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id), 0);
+        EXPECT_EQ(m->coFactorFalse(id), m->neg(b));
+    }
+
+    // XNOR2 operation
+    TEST_F(LogicOperations, xnor2) {
+        BDD_ID id = m->xnor2(a,b);
+        EXPECT_EQ(m->topVar(id), a);
+        EXPECT_EQ(m->coFactorTrue(id),b);
+        EXPECT_EQ(m->coFactorFalse(id),m->neg(b));
+    }
+
+
+
 
     TEST(ManagerTest, uniqueTableSize){
         // Returns the number of nodes currently existing in the unique table of the Manager class.

@@ -22,4 +22,7 @@ int main(int argc, char* argv[])
     ClassProject::BDD_ID aorb = m.or2(a,b);
     ClassProject::BDD_ID candd = m.and2(c,d);
     ClassProject::BDD_ID f = m.and2(aorb, candd);
+
+    // create DOT language graph representation
+    m.visualizeBDD("output.txt", f);
 }

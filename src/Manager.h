@@ -6,9 +6,10 @@
 #define VDSPROJECT_MANAGER_H
 
 #include "ManagerInterface.h"
-#include <iostream>
 #include <vector>
 #include <array>
+#include <iostream>
+#include <fstream>
 
 namespace ClassProject {
 
@@ -48,7 +49,7 @@ namespace ClassProject {
         void findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) override;
         void findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) override;
         size_t uniqueTableSize() override;
-        void visualizeBDD(std::string filepath, BDD_ID &root) override {}
+        void visualizeBDD(std::string filepath, BDD_ID &root) override;
     };
 }
 

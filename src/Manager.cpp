@@ -87,7 +87,7 @@ namespace ClassProject{
                 r = uniqueTableSize();
                 uTable.push_back({rhigh, rlow, x});
 #ifdef DEBUG
-                std::cout << std::endl << "uTable: " << r << ", " << x << ", " << rlow << ", " << rhigh;
+                std::cout << std::endl << "uTable: " << r << ", " << rhigh << ", " << rlow << ", " << x;
 #endif
             }
 

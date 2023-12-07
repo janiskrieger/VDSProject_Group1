@@ -162,9 +162,9 @@ namespace ClassProject{
         ClassProject::BDD_ID candd = m->and2(c,d);
         ClassProject::BDD_ID f = m->and2(aorb, candd);
 
-        std::set<BDD_ID> expected = {m->topVar(b),m->topVar(c), m->topVar(d)};
+        std::set<BDD_ID> expected = {m->topVar(b),m->topVar(c),m->topVar(d)};
         std::set<BDD_ID> vars;
-        m->findNodes(8, vars);
+        m->findVars(8, vars);
 
         EXPECT_THAT(vars, SetEq(expected));
     }

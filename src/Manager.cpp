@@ -187,8 +187,21 @@ namespace ClassProject{
     }
 
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) {
+        // Use findNodes to get all nodes reachable from root
+        std::set<BDD_ID> nodes_of_root;
+        findNodes(root, nodes_of_root);
 
+        // Extract variables from the set of nodes and add them to vars_of_root
+        for (const auto &node: nodes_of_root) {
+            // Check if node is not leaf node
+            if (node > 1) {
+                vars_of_root.emplace(topVar(node));
+            }
+        }
+        return;
     }
+
+
 
     size_t Manager::uniqueTableSize() {
         return uTable.size();

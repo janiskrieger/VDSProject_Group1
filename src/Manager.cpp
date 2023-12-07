@@ -176,8 +176,21 @@ namespace ClassProject{
         return topVarNameTable[root];
     }
 
+    void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {
+        nodes_of_root.emplace(root);    // inserts a new element only if the element is unique
+        // ensure root node is not leaf node
+        if (root > 1){  //terminal case of recursion
+            findNodes(high(root), nodes_of_root);
+            findNodes(low(root), nodes_of_root);
+        }
+        return;
+    }
+
+    void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) {
+
+    }
+
     size_t Manager::uniqueTableSize() {
         return uTable.size();
     }
-
 }

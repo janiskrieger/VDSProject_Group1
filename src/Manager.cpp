@@ -159,14 +159,17 @@ namespace ClassProject {
     }
 
     BDD_ID Manager::topVar(BDD_ID f) {
+        // returns the top variable for a given entry in the unique table
         return uTable[f][VTOPVAR];
     }
 
     BDD_ID Manager::low(BDD_ID f) {
+        // returns the low successor for a given entry in the unique table
         return uTable[f][VLOW];
     }
 
     BDD_ID Manager::high(BDD_ID f) {
+        // returns the high successor for a given entry in the unique table
         return uTable[f][VHIGH];
     }
 

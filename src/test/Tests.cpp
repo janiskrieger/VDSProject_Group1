@@ -25,46 +25,37 @@ namespace ClassProject{
         }
     };
 
-    TEST(Tester, createVar){
+    TEST_F(ManagerTest, createVar){
         // Creates a new variable with the given label and returns its ID.
-        Manager m = Manager();
-        EXPECT_EQ(m.createVar("a"), 2);
-        EXPECT_EQ(m.createVar("b"), 3);
+        EXPECT_EQ(a, 2);
+        EXPECT_EQ(b, 3);
     }
 
-    TEST(Tester, True) {
+    TEST_F(ManagerTest, True) {
         // Returns the ID of the True node.
-        Manager m;
-        EXPECT_EQ(m.True(), 1);
+        EXPECT_EQ(m->True(), 1);
     }
 
-    TEST(Tester, False) {
+    TEST_F(ManagerTest, False) {
         // Returns the ID of the False node.
-        Manager m;
-        EXPECT_EQ(m.False(), 0);
+        EXPECT_EQ(m->False(), 0);
     }
 
-    TEST(Tester, isConstant){
+    TEST_F(ManagerTest, isConstant){
         // Returns true, if the given ID represents a leaf node.
-        Manager m = Manager();
-        m.createVar("a");   // ID: 2
-
-        EXPECT_EQ(m.isConstant(0), true);
-        EXPECT_EQ(m.isConstant(1), true);
-        EXPECT_EQ(m.isConstant(2), false);
+        EXPECT_EQ(m->isConstant(0), true);
+        EXPECT_EQ(m->isConstant(1), true);
+        EXPECT_EQ(m->isConstant(a), false);
     }
 
-    TEST(Tester, isVariable){
+    TEST_F(ManagerTest, isVariable){
         // Creates a new variable with the given label and returns its ID.
-        Manager m = Manager();
-        BDD_ID a = m.createVar("a");
-        BDD_ID b = m.createVar("b");
-        BDD_ID aandb = m.and2(a,b);
+        BDD_ID aandb = m->and2(a,b);
 
-        EXPECT_EQ(m.isVariable(1), false);
-        EXPECT_EQ(m.isVariable(a), true);
-        EXPECT_EQ(m.isVariable(b), true);
-        EXPECT_EQ(m.isVariable(aandb), false);
+        EXPECT_EQ(m->isVariable(1), false);
+        EXPECT_EQ(m->isVariable(a), true);
+        EXPECT_EQ(m->isVariable(b), true);
+        EXPECT_EQ(m->isVariable(aandb), false);
 
     }
 
@@ -124,11 +115,10 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id),m->neg(b));
     }
 
-    TEST(Tester, getTopVarName){
+    TEST_F(ManagerTest, getTopVarName){
         // Returns the label of the given BDD_ID.
-        Manager m = Manager();
-        EXPECT_EQ(m.getTopVarName(0), "false");
-        EXPECT_EQ(m.getTopVarName(1), "true");
+        EXPECT_EQ(m->getTopVarName(0), "false");
+        EXPECT_EQ(m->getTopVarName(1), "true");
     }
 
     // Matcher set comparison
@@ -169,12 +159,11 @@ namespace ClassProject{
         EXPECT_THAT(vars, SetEq(expected));
     }
 
-    TEST(Tester, uniqueTableSize){
+    TEST_F(ManagerTest, uniqueTableSize){
         // Returns the number of nodes currently existing in the unique table of the Manager class.
-        Manager m = Manager();
-        EXPECT_EQ(m.uniqueTableSize(), 2);
+        EXPECT_EQ(m->uniqueTableSize(), 6);
 
-        m.createVar("a");
-        EXPECT_EQ(m.uniqueTableSize(), 3);
+        m->createVar("e");
+        EXPECT_EQ(m->uniqueTableSize(), 7);
     }
 }

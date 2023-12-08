@@ -37,7 +37,7 @@
   <br />
   Group #1
   <br />
-  Winter Semester 2022/2023
+  Winter Semester 2023/2024
   </h3>
 
   <p align="center">

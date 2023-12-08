@@ -43,9 +43,11 @@ namespace ClassProject{
 
     TEST_F(ManagerTest, isConstant){
         // returns true, if the given ID represents a leaf node
+        BDD_ID aorb = m-> or2(a,b);
         EXPECT_EQ(m->isConstant(0), true);
         EXPECT_EQ(m->isConstant(1), true);
         EXPECT_EQ(m->isConstant(a), false);
+        EXPECT_EQ(m->isConstant(aorb),false);
     }
 
     TEST_F(ManagerTest, isVariable){
@@ -58,8 +60,58 @@ namespace ClassProject{
         EXPECT_EQ(m->isVariable(aandb), false);
     }
 
+    TEST_F(ManagerTest, ite){
+
+        EXPECT_EQ(m->ite(0,a,b), b);
+        EXPECT_EQ(m->ite(1,a,b), a);
+        EXPECT_EQ(m->ite(a,1,0), a);
+        EXPECT_EQ(m->ite(c,d,d), d);
+    }
+
+    TEST_F(ManagerTest, coFactorTrue){
+        BDD_ID aorb = m->or2(a,b);
+        BDD_ID candd = m-> and2(c,d);
+        BDD_ID f = m->and2(aorb, candd);
+        //f1 = (a+b)cd
+        EXPECT_EQ(m->coFactorTrue(f, a), candd);
+        EXPECT_EQ(m->coFactorTrue(f, a), m->coFactorTrue(f));
+        EXPECT_EQ(m->coFactorTrue(f, b), candd);
+        EXPECT_EQ(m->coFactorTrue(f, c), m->and2(d, aorb));
+        EXPECT_EQ(m->coFactorTrue(f, d), m->and2(c, aorb));
+
+        /*BDD_ID aandb = m->and2(a,b);
+        EXPECT_EQ(m->coFactorTrue(aandb), b);
+        EXPECT_EQ(m->coFactorTrue(aandb,a), b);
+        EXPECT_EQ(m->coFactorTrue(aandb,b), a);
+        BDD_ID aorb = m->or2(a,b);
+        EXPECT_EQ(m->coFactorTrue(aorb,a), 1);
+        EXPECT_EQ(m->coFactorTrue(aorb,c), aorb);
+
+        // f = ( a + b ) * ~c
+        BDD_ID f = m->and2(m->or2(a,b),m->neg(c));
+        EXPECT_EQ(m->coFactorTrue(f,a), m->neg(c));
+        EXPECT_EQ(m->coFactorTrue(f,b), m->neg(c));
+        EXPECT_EQ(m->coFactorTrue(f,c), 0);*/
+    }
+
+    TEST_F(ManagerTest, coFactorFalse){
+        BDD_ID aandb = m->and2(a,b);
+        EXPECT_EQ(m->coFactorFalse(aandb), 0);
+        EXPECT_EQ(m->coFactorFalse(aandb,a), 0);
+        BDD_ID aorb = m->or2(a,b);
+        EXPECT_EQ(m->coFactorFalse(aorb,a), b);
+        EXPECT_EQ(m->coFactorFalse(aorb,c), aorb);
+
+        // f = ( a + b ) * ~c
+        BDD_ID f = m->and2(m->or2(a,b),m->neg(c));
+        EXPECT_EQ(m->coFactorFalse(f,a), m->and2(b,m->neg(c)));
+        EXPECT_EQ(m->coFactorFalse(f,b), m->and2(a,m->neg(c)));
+        EXPECT_EQ(m->coFactorFalse(f,c), m->or2(a,b));
+    }
+
     TEST_F(ManagerTest, and2){
         BDD_ID id = m->and2(a,b);
+
         EXPECT_EQ(m->topVar(id), a);
         EXPECT_EQ(m->coFactorTrue(id), b);
         EXPECT_EQ(m->coFactorFalse(id), 0);

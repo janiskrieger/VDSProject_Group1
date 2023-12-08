@@ -80,7 +80,7 @@ namespace ClassProject {
             // find or add unique table and eliminate isomorphic sub-graphs
             ClassProject::BDD_ID r = -1;
             for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
-                if (topVar(id) == topVar(i) && highSuccessor(t) == t && lowSuccessor(id) == e) {
+                if (topVar(id) == topVar(i) && highSuccessor(id) == t && lowSuccessor(id) == e) {
                     r = id;
                     break;
                 }

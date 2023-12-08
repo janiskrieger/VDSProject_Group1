@@ -15,11 +15,6 @@ namespace ClassProject {
 
     class Manager : public ManagerInterface {
     private:
-        // index definition for uTable vector array
-        const int VHIGH = 0;
-        const int VLOW = 1;
-        const int VTOPVAR = 2;
-
         std::vector<std::array<BDD_ID , 3> > uTable;
         std::vector<std::string> topVarNameTable;
     public:
@@ -31,8 +26,8 @@ namespace ClassProject {
         bool isConstant(BDD_ID f) override;
         bool isVariable(BDD_ID x) override;
         BDD_ID topVar(BDD_ID f) override;
-        BDD_ID low(BDD_ID f);
-        BDD_ID high(BDD_ID f);
+        BDD_ID lowSuccessor(BDD_ID f);
+        BDD_ID highSuccessor(BDD_ID f);
         BDD_ID ite(BDD_ID i, BDD_ID t, BDD_ID e) override;
         BDD_ID coFactorTrue(BDD_ID f, BDD_ID x) override;
         BDD_ID coFactorFalse(BDD_ID f, BDD_ID x) override;

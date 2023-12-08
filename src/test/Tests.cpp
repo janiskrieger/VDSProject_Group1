@@ -26,40 +26,38 @@ namespace ClassProject{
     };
 
     TEST_F(ManagerTest, createVar){
-        // Creates a new variable with the given label and returns its ID.
+        // creates a new variable with the given label and returns its ID
         EXPECT_EQ(a, 2);
         EXPECT_EQ(b, 3);
     }
 
     TEST_F(ManagerTest, True) {
-        // Returns the ID of the True node.
+        // returns the ID of the True node
         EXPECT_EQ(m->True(), 1);
     }
 
     TEST_F(ManagerTest, False) {
-        // Returns the ID of the False node.
+        // returns the ID of the False node
         EXPECT_EQ(m->False(), 0);
     }
 
     TEST_F(ManagerTest, isConstant){
-        // Returns true, if the given ID represents a leaf node.
+        // returns true, if the given ID represents a leaf node
         EXPECT_EQ(m->isConstant(0), true);
         EXPECT_EQ(m->isConstant(1), true);
         EXPECT_EQ(m->isConstant(a), false);
     }
 
     TEST_F(ManagerTest, isVariable){
-        // Creates a new variable with the given label and returns its ID.
+        // creates a new variable with the given label and returns its ID
         BDD_ID aandb = m->and2(a,b);
 
         EXPECT_EQ(m->isVariable(1), false);
         EXPECT_EQ(m->isVariable(a), true);
         EXPECT_EQ(m->isVariable(b), true);
         EXPECT_EQ(m->isVariable(aandb), false);
-
     }
 
-    // AND2 operation
     TEST_F(ManagerTest, and2){
         BDD_ID id = m->and2(a,b);
         EXPECT_EQ(m->topVar(id), a);
@@ -67,7 +65,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), 0);
     }
 
-    // OR2 operation
     TEST_F(ManagerTest, or2) {
         BDD_ID id = m->or2(a, b);
         EXPECT_EQ(m->topVar(id), a);
@@ -75,7 +72,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), b);
     }
 
-    // XOR2 operation
     TEST_F(ManagerTest, xor2) {
         BDD_ID id = m->xor2(a, b);
         EXPECT_EQ(m->topVar(id), a);
@@ -83,7 +79,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), b);
     }
 
-    // NEG operation
     TEST_F(ManagerTest, neg) {
         BDD_ID id = m->neg(a);
         EXPECT_EQ(m->topVar(id), a);
@@ -91,7 +86,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), 1);
     }
 
-    // NAND2 operation
     TEST_F(ManagerTest, nand2) {
         BDD_ID id = m->nand2(a,b);
         EXPECT_EQ(m->topVar(id), a);
@@ -99,7 +93,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), 1);
     }
 
-    // NOR2 operation
     TEST_F(ManagerTest, nor2) {
         BDD_ID id = m->nor2(a,b);
         EXPECT_EQ(m->topVar(id), a);
@@ -107,7 +100,6 @@ namespace ClassProject{
         EXPECT_EQ(m->coFactorFalse(id), m->neg(b));
     }
 
-    // XNOR2 operation
     TEST_F(ManagerTest, xnor2) {
         BDD_ID id = m->xnor2(a,b);
         EXPECT_EQ(m->topVar(id), a);
@@ -116,18 +108,18 @@ namespace ClassProject{
     }
 
     TEST_F(ManagerTest, getTopVarName){
-        // Returns the label of the given BDD_ID.
+        // returns the label of the given BDD_ID
         EXPECT_EQ(m->getTopVarName(0), "false");
         EXPECT_EQ(m->getTopVarName(1), "true");
     }
 
-    // Matcher set comparison
     MATCHER_P(SetEq, expected, "") {
+        // matcher set comparison
         return std::equal(arg.begin(), arg.end(), expected.begin(), expected.end());
     }
 
     TEST_F(ManagerTest, findNodes) {
-        //This function takes a node root and an empty set nodes of root.
+        // This function takes a node root and an empty set nodes of root.
         // It returns the set of all nodes which are reachable from root
         // including itself.
         // f = (a + b) * c * d
@@ -160,7 +152,7 @@ namespace ClassProject{
     }
 
     TEST_F(ManagerTest, uniqueTableSize){
-        // Returns the number of nodes currently existing in the unique table of the Manager class.
+        // returns the number of nodes currently existing in the unique table of the Manager class.
         EXPECT_EQ(m->uniqueTableSize(), 6);
 
         m->createVar("e");

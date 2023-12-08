@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['or2_23',['or2',['../class_class_project_1_1_manager_interface.html#a68e94ee4199e189b0c9243991cd86dfb',1,'ClassProject::ManagerInterface']]]
+  ['lowsuccessor_18',['lowSuccessor',['../class_class_project_1_1_manager.html#a20eda330bc3fa138aa710d822a8a214a',1,'ClassProject::Manager']]]
 ];

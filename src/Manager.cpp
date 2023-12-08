@@ -1,28 +1,23 @@
 #include "Manager.h"
 
 namespace ClassProject {
+    /**
+     * Initializes unique table
+     *
+     * @param
+     * @return
+     */
     Manager::Manager() {
-        // HIGH, LOW, TopVar
-        // The BDD_ID of each entry is the index of the vector
-        // The TopVarName is stored in another vector with the same BDD_ID
-
-        // Create entries for leaf nodes
+        // uTable order: HIGH, LOW, TopVar
         uTable.push_back({0, 0, 0});
         topVarNameTable.emplace_back("false");
         uTable.push_back({1, 1, 1});
         topVarNameTable.emplace_back("true");
-#ifdef DEBUG
-        std::cout << std::endl << "uTable: 0, 0, 0 ,0, true";
-        std::cout << std::endl << "uTable: 1, 1, 1 ,1, false";
-#endif
     }
 
     BDD_ID Manager::createVar(const std::string &label) {
         BDD_ID id = uniqueTableSize();
         uTable.push_back({1, 0, id});
-#ifdef DEBUG
-        std::cout << std::endl << "uTable: " << id << ", 1, 0, " << id << ", " << label;
-#endif
         topVarNameTable.emplace_back(label);
         return id;
     }
@@ -48,9 +43,16 @@ namespace ClassProject {
             return false;
     }
 
+    /**
+     * Implements the if-then-else algorithm.
+     *
+     * @param i if
+     * @param t then
+     * @param e else
+     * @return Returns the existing or new node representing the ite expression
+     */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
-        // Terminal case of recursion (lecture slides 2-15)
-        // ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
+        // terminal case of recursion  ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
         if (i == True()) {
             return t;
         } else if (i == False()) {
@@ -70,62 +72,84 @@ namespace ClassProject {
             if (topVar(e) < x && isVariable(topVar(e)))
                 x = topVar(e);
 
-            BDD_ID rhigh = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
-            BDD_ID rlow = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
-            if (rhigh == rlow) { // reduction is possible
-                return rhigh;
+            BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
+            BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
+            if (high == low) { // reduction is possible
+                return high;
             }
-            // Find or add unique table and eliminate isomorphic sub-graphs
+            // find or add unique table and eliminate isomorphic sub-graphs
             ClassProject::BDD_ID r = -1;
             for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
-                if (topVar(id) == topVar(i) && high(t) == t && low(id) == e) {
+                if (topVar(id) == topVar(i) && highSuccessor(t) == t && lowSuccessor(id) == e) {
                     r = id;
                     break;
                 }
             }
             if (r == -1) {   // no entry was found
                 r = uniqueTableSize();
-                uTable.push_back({rhigh, rlow, x});
-#ifdef DEBUG
-                std::cout << std::endl << "uTable: " << r << ", " << rhigh << ", " << rlow << ", " << x;
-#endif
+                uTable.push_back({high, low, x});
             }
-
             //update_computed_table((f, g, h), r);
             return r;
         }
     }
 
+    /**
+     * Returns the positive co-factor of the function f with regard to variable x.
+     *
+     * @param f Function represented by ID
+     * @param x Co-factor variable
+     * @return Positive co-factor
+     */
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x) {
         if (isConstant(f) || isConstant(x) || topVar(f) > x) {    // terminal case
             return f;
         }
         if (topVar(f) == x) {
-            return high(f);
+            return highSuccessor(f);
         } else {
-            BDD_ID T = coFactorTrue(high(f), x);
-            BDD_ID F = coFactorTrue(low(f), x);
+            BDD_ID T = coFactorTrue(highSuccessor(f), x);
+            BDD_ID F = coFactorTrue(lowSuccessor(f), x);
             return ite(topVar(f), T, F);
         }
     }
 
+    /**
+     * Returns the negative co-factor of the function f with regard to variable x.
+     *
+     * @param f Function represented by ID
+     * @param x Co-factor variable
+     * @return Negative co-factor
+     */
     BDD_ID Manager::coFactorFalse(BDD_ID f, BDD_ID x) {
         if (isConstant(f) || isConstant(x) || topVar(f) > x) {    // terminal case
             return f;
         }
         if (topVar(f) == x) {
-            return low(f);
+            return lowSuccessor(f);
         } else {
-            BDD_ID T = coFactorFalse(high(f), x);
-            BDD_ID F = coFactorFalse(low(f), x);
+            BDD_ID T = coFactorFalse(highSuccessor(f), x);
+            BDD_ID F = coFactorFalse(lowSuccessor(f), x);
             return ite(topVar(f), T, F);
         }
     }
 
+    /**
+     * Returns the positive co-factor of the function f with regard to its top variable.
+     *
+     * @param f Function represented by ID
+     * @return Positive co-factor
+     */
     BDD_ID Manager::coFactorTrue(BDD_ID f) {
         return coFactorTrue(f, topVar(f));
     }
 
+    /**
+     * Returns the negative co-factor of the function f with regard to its top variable.
+     *
+     * @param f Function represented by ID
+     * @return Negative co-factor
+     */
     BDD_ID Manager::coFactorFalse(BDD_ID f) {
         return coFactorFalse(f, topVar(f));
     }
@@ -158,81 +182,102 @@ namespace ClassProject {
         return ite(a, b, neg(b));
     }
 
+    /**
+     * Returns the ID of the top variable.
+     *
+     * @param f
+     * @return ID of the top variable
+     */
     BDD_ID Manager::topVar(BDD_ID f) {
-        // returns the top variable for a given entry in the unique table
-        return uTable[f][VTOPVAR];
+        return uTable[f][2];
     }
 
-    BDD_ID Manager::low(BDD_ID f) {
-        // returns the low successor for a given entry in the unique table
-        return uTable[f][VLOW];
+    /**
+     * Returns the ID of the low successor
+     *
+     * @param f
+     * @return ID of the low successor
+     */
+    BDD_ID Manager::lowSuccessor(BDD_ID f) {
+        return uTable[f][1];
     }
 
-    BDD_ID Manager::high(BDD_ID f) {
-        // returns the high successor for a given entry in the unique table
-        return uTable[f][VHIGH];
+    /**
+     * Returns the ID of the high successor
+     *
+     * @param f
+     * @return ID of the high successor
+     */
+    BDD_ID Manager::highSuccessor(BDD_ID f) {
+        return uTable[f][0];
     }
 
     std::string Manager::getTopVarName(const BDD_ID &root) {
         return topVarNameTable[root];
     }
 
+    /**
+     * This function takes a node root and an empty set nodes of root. It returns the set of all nodes which are
+     * reachable from root including itself.
+     *
+     * @param root Root node
+     * @param nodes_of_root Empty set nodes of root
+     */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {
-        nodes_of_root.emplace(root);    // inserts a new element only if the element is unique
-        // ensure root node is not leaf node
-        if (root > 1) {  //terminal case of recursion
-            findNodes(high(root), nodes_of_root);
-            findNodes(low(root), nodes_of_root);
+        nodes_of_root.emplace(root);
+        if (root > 1) {  // terminal case of recursion
+            findNodes(highSuccessor(root), nodes_of_root);
+            findNodes(lowSuccessor(root), nodes_of_root);
         }
-        return;
     }
 
+    /**
+     * This function takes a node root and an empty set vars of root. It returns the set of all variables which are
+     * reachable from root including itself.
+     *
+     * @param root Root node
+     * @param vars_of_root Empty set vars of root
+     */
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) {
-        // Use findNodes to get all nodes reachable from root
         std::set<BDD_ID> nodes_of_root;
         findNodes(root, nodes_of_root);
-
-        // Extract variables from the set of nodes and add them to vars_of_root
         for (const auto &node: nodes_of_root) {
-            // Check if node is not leaf node
             if (node > 1) {
                 vars_of_root.emplace(topVar(node));
             }
         }
-        return;
-    }
+   }
 
     size_t Manager::uniqueTableSize() {
         return uTable.size();
     }
 
+    /**
+     * Creates a file that contains a visual representation of the BDD represented by the root node in the DOT format.
+     *
+     * @param filepath Filepath
+     * @param root Root node
+     */
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root) {
-        //  creates a file visualizing a digraph in the DOT language
-        if (root > 1) {
-            std::set<BDD_ID> vars;
-            std::set<BDD_ID> nodes;
-            findVars(root, vars);
-            findNodes(root, nodes);
+        std::set<BDD_ID> vars;
+        std::set<BDD_ID> nodes;
+        findVars(root, vars);
+        findNodes(root, nodes);
+        std::ofstream File(filepath);
 
-            // create and open a text file
-            std::ofstream File(filepath);
-
-            // write DOT programm
-            File << "digraph D {\n";
-            File << getTopVarName(topVar(0)) << " [shape=box]\n";
-            File << getTopVarName(topVar(1)) << " [shape=box]\n";
-            for (auto itr: vars) {
-                File << getTopVarName(topVar(itr)) << " [shape=circle]\n";
-            }
-            for (auto itr: nodes) {
-                if (!isConstant(itr)) {
-                    File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(high(itr)))<< "\n";
-                    File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(low(itr))) << " [style=dashed]\n";
-                }
-            }
-            File << "}";
-            // close file
-            File.close();
+        File << "digraph D {\n";
+        File << getTopVarName(topVar(0)) << " [shape=box]\n";
+        File << getTopVarName(topVar(1)) << " [shape=box]\n";
+        for (auto itr: vars) {
+            File << getTopVarName(topVar(itr)) << " [shape=circle]\n";
         }
+        for (auto itr: nodes) {
+            if (!isConstant(itr)) {
+                File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(highSuccessor(itr))) << "\n";
+                File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(lowSuccessor(itr))) << " [style=dashed]\n";
+            }
+        }
+        File << "}";
+        File.close();
     }
 }

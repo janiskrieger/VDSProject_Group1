@@ -9,10 +9,10 @@
 
 int main(int argc, char* argv[])
 {
-    //ROBDD Construction Example
+    // ROBDD Construction Example
     ClassProject::Manager m = ClassProject::Manager();
 
-    //create variables
+    // create variables
     ClassProject::BDD_ID a = m.createVar("a");
     ClassProject::BDD_ID b = m.createVar("b");
     ClassProject::BDD_ID c = m.createVar("c");

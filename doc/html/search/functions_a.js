@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['visualizebdd_58',['visualizeBDD',['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface']]]
+  ['setup_77',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]]
 ];

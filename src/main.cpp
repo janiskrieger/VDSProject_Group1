@@ -7,8 +7,7 @@
 #include "Manager.h"
 
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     // ROBDD Construction Example
     ClassProject::Manager m = ClassProject::Manager();
 
@@ -19,8 +18,8 @@ int main(int argc, char* argv[])
     ClassProject::BDD_ID d = m.createVar("d");
 
     // f = (a + b) * c * d
-    ClassProject::BDD_ID aorb = m.or2(a,b);
-    ClassProject::BDD_ID candd = m.and2(c,d);
+    ClassProject::BDD_ID aorb = m.or2(a, b);
+    ClassProject::BDD_ID candd = m.and2(c, d);
     ClassProject::BDD_ID f = m.and2(aorb, candd);
 
     // create DOT language graph representation

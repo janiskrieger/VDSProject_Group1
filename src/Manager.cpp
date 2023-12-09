@@ -53,14 +53,12 @@ namespace ClassProject {
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
         // terminal case of recursion  ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
-        if (i == True()) {
+        if (i == True() || t == e) {
             return t;
         } else if (i == False()) {
             return e;
         } else if (t == True() and e == False()) {
             return i;
-        } else if (t == e) {
-            return t;
         } /*else if (computed table has entry for (f, g, h)){
             return i;   // eliminate repetitions in computations
         }*/
@@ -246,10 +244,29 @@ namespace ClassProject {
                 vars_of_root.emplace(topVar(node));
             }
         }
-   }
+    }
 
     size_t Manager::uniqueTableSize() {
         return uTable.size();
+    }
+
+    /**
+     * Prints contents of uTable to std.
+     */
+    void Manager::printuTable() {
+        std::cout << std::setw(10) << "BDD_ID" << std::setw(10) << "Label" << std::setw(10) << "High" << std::setw(10)
+                  << "Low" << std::setw(10) << "TopVar" << std::endl;
+        for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
+            if (isConstant(id) || isVariable(id)) {
+                std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
+                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            } else {
+                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10)
+                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            }
+        }
     }
 
     /**
@@ -259,22 +276,18 @@ namespace ClassProject {
      * @param root Root node
      */
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root) {
-        std::set<BDD_ID> vars;
         std::set<BDD_ID> nodes;
-        findVars(root, vars);
         findNodes(root, nodes);
         std::ofstream File(filepath);
 
         File << "digraph D {\n";
-        File << getTopVarName(topVar(0)) << " [shape=box]\n";
-        File << getTopVarName(topVar(1)) << " [shape=box]\n";
-        for (auto itr: vars) {
-            File << getTopVarName(topVar(itr)) << " [shape=circle]\n";
-        }
+        File << 0 << " [shape=box label=\"0\"]\n";
+        File << 1 << " [shape=box label=\"1\"]\n";
         for (auto itr: nodes) {
             if (!isConstant(itr)) {
-                File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(highSuccessor(itr))) << "\n";
-                File << getTopVarName(topVar(itr)) << " -> " << getTopVarName(topVar(lowSuccessor(itr))) << " [style=dashed]\n";
+                File << itr << " [shape=circle label=\"" << getTopVarName(topVar(itr)) << "\"]\n";
+                File << itr << " -> " << highSuccessor(itr) << "\n";
+                File << itr << " -> " << lowSuccessor(itr) << " [style=dashed]\n";
             }
         }
         File << "}";

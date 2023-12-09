@@ -18,9 +18,16 @@ int main(int argc, char *argv[]) {
     ClassProject::BDD_ID d = m.createVar("d");
 
     // f = (a + b) * c * d
-    ClassProject::BDD_ID aorb = m.or2(a, b);
-    ClassProject::BDD_ID candd = m.and2(c, d);
-    ClassProject::BDD_ID f = m.and2(aorb, candd);
+    ClassProject::BDD_ID f = m.and2(m.or2(a, b), m.and2(c, d));
+
+    // f = a xor b xor c
+    //ClassProject::BDD_ID f = m.xor2(a, m.xor2(b, c));
+
+    // f = ~(a+b)
+    //ClassProject::BDD_ID f = m.neg(m.or2(a, b));
+
+    // print unique table
+    m.printuTable();
 
     // create DOT language graph representation
     m.visualizeBDD("output.txt", f);

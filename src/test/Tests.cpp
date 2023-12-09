@@ -112,10 +112,24 @@ namespace ClassProject {
     }
 
     TEST_F(ManagerTest, neg) {
-        BDD_ID id = m->neg(a);
-        EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), 0);
-        EXPECT_EQ(m->coFactorFalse(id), 1);
+        // returns the ID representing the negation of the given function.
+        EXPECT_EQ(m->neg(m->True()), m->False());
+        EXPECT_EQ(m->neg(m->False()), m->True());
+        BDD_ID nor1 = m->neg(m->or2(a, b));
+        BDD_ID nor2 = m->nor2(a, b);
+        EXPECT_EQ(nor1, nor2);
+        EXPECT_EQ(m->topVar(nor1), m->topVar(nor2));
+        EXPECT_EQ(m->coFactorTrue(nor1), m->coFactorTrue(nor2));
+        EXPECT_EQ(m->coFactorFalse(nor1), m->coFactorFalse(nor2));
+
+        ClassProject::BDD_ID f = m->xor2(a, m->xor2(b, c));
+        EXPECT_EQ(m->topVar(f), a);
+        EXPECT_EQ(m->coFactorTrue(f, a), m->neg(m->xor2(b, c)));
+        EXPECT_EQ(m->coFactorTrue(f, b), m->neg(m->xor2(a, c)));
+        EXPECT_EQ(m->coFactorTrue(f, c), m->neg(m->xor2(a, b)));
+        EXPECT_EQ(m->coFactorFalse(f, a), m->xor2(b, c));
+        EXPECT_EQ(m->coFactorFalse(f, b), m->xor2(a, c));
+        EXPECT_EQ(m->coFactorFalse(f, c), m->xor2(a, b));
     }
 
     TEST_F(ManagerTest, nand2) {
@@ -143,6 +157,7 @@ namespace ClassProject {
         // returns the label of the given BDD_ID
         EXPECT_EQ(m->getTopVarName(0), "false");
         EXPECT_EQ(m->getTopVarName(1), "true");
+        EXPECT_EQ(m->getTopVarName(a), "a");
     }
 
     MATCHER_P(SetEq, expected, "") {

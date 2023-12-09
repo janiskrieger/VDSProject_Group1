@@ -165,7 +165,19 @@ namespace ClassProject {
     }
 
     BDD_ID Manager::neg(BDD_ID a) {
-        return ite(a, 0, 1);
+        BDD_ID high = highSuccessor(a);
+        BDD_ID low = lowSuccessor(a);
+        BDD_ID var = topVar(a);
+
+        if (isVariable(a)) {
+            return ite(var, 0, 1);
+        } else if (isConstant(a)) {
+            if (var == True())
+                return False();
+            else
+                return True();
+        }
+        return ite(var, neg(high), neg(low));
     }
 
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b) {
@@ -286,8 +298,8 @@ namespace ClassProject {
         for (auto itr: nodes) {
             if (!isConstant(itr)) {
                 File << itr << " [shape=circle label=\"" << getTopVarName(topVar(itr)) << "\"]\n";
-                File << itr << " -> " << highSuccessor(itr) << "\n";
                 File << itr << " -> " << lowSuccessor(itr) << " [style=dashed]\n";
+                File << itr << " -> " << highSuccessor(itr) << "\n";
             }
         }
         File << "}";

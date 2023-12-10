@@ -102,6 +102,9 @@ namespace ClassProject {
         EXPECT_EQ(m->topVar(id), a);
         EXPECT_EQ(m->coFactorTrue(id), 1);
         EXPECT_EQ(m->coFactorFalse(id), b);
+        BDD_ID id2 = m->or2(d, c);
+        EXPECT_EQ(m->coFactorTrue(id2, c), 1);
+        EXPECT_EQ(m->coFactorFalse(id2), d);
     }
 
     TEST_F(ManagerTest, xor2) {

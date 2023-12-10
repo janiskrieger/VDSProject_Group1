@@ -165,19 +165,13 @@ namespace ClassProject {
     }
 
     BDD_ID Manager::neg(BDD_ID a) {
-        BDD_ID high = highSuccessor(a);
-        BDD_ID low = lowSuccessor(a);
-        BDD_ID var = topVar(a);
-
-        if (isVariable(a)) {
-            return ite(var, 0, 1);
-        } else if (isConstant(a)) {
-            if (var == True())
+        if (isConstant(a)) {
+            if (topVar(a) == True())
                 return False();
             else
                 return True();
         }
-        return ite(var, neg(high), neg(low));
+        return ite(topVar(a), neg(highSuccessor(a)), neg(lowSuccessor(a)));
     }
 
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b) {

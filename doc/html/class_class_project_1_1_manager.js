@@ -21,6 +21,7 @@ var class_class_project_1_1_manager =
     [ "neg", "class_class_project_1_1_manager.html#a8a2163b4373123d53bc7e4a7073f416d", null ],
     [ "nor2", "class_class_project_1_1_manager.html#ae09155687f57f9f919a7b8f54d7b4739", null ],
     [ "or2", "class_class_project_1_1_manager.html#ae72d444aa17398a80e00de65fc35681a", null ],
+    [ "printuTable", "class_class_project_1_1_manager.html#a334bc80806eb3c3c21c9a7ccb5901e45", null ],
     [ "topVar", "class_class_project_1_1_manager.html#aa6c0a7885a3dd6b4d7ffc646563cb01b", null ],
     [ "True", "class_class_project_1_1_manager.html#a26272d05caa88d6770484c0d4154fda7", null ],
     [ "uniqueTableSize", "class_class_project_1_1_manager.html#a0724a85292854fe2179b92d6c1aaf2ed", null ],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setup_34',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]]
+  ['printutable_34',['printuTable',['../class_class_project_1_1_manager.html#a334bc80806eb3c3c21c9a7ccb5901e45',1,'ClassProject::Manager']]]
 ];

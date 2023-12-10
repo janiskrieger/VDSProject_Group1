@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['visualizebdd_42',['visualizeBDD',['../class_class_project_1_1_manager.html#a1aaa80c8dd2370b4359ba155518110bc',1,'ClassProject::Manager::visualizeBDD()'],['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface::visualizeBDD()']]]
+  ['uniquetablesize_42',['uniqueTableSize',['../class_class_project_1_1_manager.html#a0724a85292854fe2179b92d6c1aaf2ed',1,'ClassProject::Manager::uniqueTableSize()'],['../class_class_project_1_1_manager_interface.html#a85cac80444b26e5b80eb96b9f1231c0e',1,'ClassProject::ManagerInterface::uniqueTableSize()']]]
 ];

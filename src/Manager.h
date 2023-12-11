@@ -18,6 +18,15 @@ namespace ClassProject {
     private:
         std::vector<std::array<BDD_ID, 3> > uTable;
         std::vector<std::string> topVarNameTable;
+
+        BDD_ID lowSuccessor(BDD_ID f);
+
+        BDD_ID highSuccessor(BDD_ID f);
+
+        BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
+
+        void printuTable();
+
     public:
         Manager();
 
@@ -34,12 +43,6 @@ namespace ClassProject {
         bool isVariable(BDD_ID x) override;
 
         BDD_ID topVar(BDD_ID f) override;
-
-        BDD_ID lowSuccessor(BDD_ID f);
-
-        BDD_ID highSuccessor(BDD_ID f);
-
-        BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
 
         BDD_ID ite(BDD_ID i, BDD_ID t, BDD_ID e) override;
 
@@ -72,8 +75,6 @@ namespace ClassProject {
         void findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) override;
 
         size_t uniqueTableSize() override;
-
-        void printuTable();
 
         void visualizeBDD(std::string filepath, BDD_ID &root) override;
     };

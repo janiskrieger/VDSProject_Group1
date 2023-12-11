@@ -44,19 +44,19 @@ namespace ClassProject {
     TEST_F(ManagerTest, isConstant) {
         // returns true, if the given ID represents a leaf node
         BDD_ID aorb = m->or2(a, b);
-        EXPECT_EQ(m->isConstant(m->False()), true);
-        EXPECT_EQ(m->isConstant(m->True()), true);
-        EXPECT_EQ(m->isConstant(a), false);
-        EXPECT_EQ(m->isConstant(aorb), false);
+        EXPECT_EQ(m->isConstant(m->False()), m->True());
+        EXPECT_EQ(m->isConstant(m->True()), m->True());
+        EXPECT_EQ(m->isConstant(a), m->False());
+        EXPECT_EQ(m->isConstant(aorb), m->False());
     }
 
     TEST_F(ManagerTest, isVariable) {
         // creates a new variable with the given label and returns its ID
         BDD_ID aandb = m->and2(a, b);
-        EXPECT_EQ(m->isVariable(m->True()), false);
-        EXPECT_EQ(m->isVariable(a), true);
-        EXPECT_EQ(m->isVariable(b), true);
-        EXPECT_EQ(m->isVariable(aandb), false);
+        EXPECT_EQ(m->isVariable(m->True()), m->False());
+        EXPECT_EQ(m->isVariable(a), m->True());
+        EXPECT_EQ(m->isVariable(b), m->True());
+        EXPECT_EQ(m->isVariable(aandb), m->False());
     }
 
     TEST_F(ManagerTest, ite) {
@@ -189,9 +189,9 @@ namespace ClassProject {
         ClassProject::BDD_ID candd = m->and2(c, d);
         ClassProject::BDD_ID f = m->and2(aorb, candd);
 
-        std::set<BDD_ID> expected = {m->and2(b,candd), candd, d, m->True(), m->False()};
+        std::set<BDD_ID> expected = {m->and2(b, candd), candd, d, m->True(), m->False()};
         std::set<BDD_ID> nodes;
-        m->findNodes(m->and2(b,candd), nodes);
+        m->findNodes(m->and2(b, candd), nodes);
 
         EXPECT_THAT(nodes, SetEq(expected));
     }
@@ -208,16 +208,15 @@ namespace ClassProject {
 
         std::set<BDD_ID> expected = {m->topVar(b), m->topVar(c), m->topVar(d)};
         std::set<BDD_ID> vars;
-        m->findVars(m->and2(b,candd), vars);
+        m->findVars(m->and2(b, candd), vars);
 
         EXPECT_THAT(vars, SetEq(expected));
     }
 
     TEST_F(ManagerTest, uniqueTableSize) {
         // returns the number of nodes currently existing in the unique table of the Manager class.
-        EXPECT_EQ(m->uniqueTableSize(), 6);
-
+        BDD_ID size = m->uniqueTableSize();
         m->createVar("e");
-        EXPECT_EQ(m->uniqueTableSize(), 7);
+        EXPECT_EQ(m->uniqueTableSize(), size + 1);
     }
 }

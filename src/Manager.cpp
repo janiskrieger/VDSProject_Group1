@@ -4,6 +4,73 @@
 
 namespace ClassProject {
     /**
+     * Returns the ID of the low successor
+     *
+     * @param f
+     * @return ID of the low successor
+     */
+    BDD_ID Manager::lowSuccessor(BDD_ID f) {
+        return uTable[f][1];
+    }
+
+    /**
+     * Returns the ID of the high successor
+     *
+     * @param f
+     * @return ID of the high successor
+     */
+    BDD_ID Manager::highSuccessor(BDD_ID f) {
+        return uTable[f][0];
+    }
+
+    /**
+     * Find or add unique table and eliminate isomorphic sub-graphs
+     *
+     * @param x     variable
+     * @param high  high successor
+     * @param low   low successor
+     * @return      BDD ID of unique table entry
+     */
+    BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
+                                             ClassProject::BDD_ID low) {
+        ClassProject::BDD_ID r = -1;
+        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
+            if (topVar(id) == x && highSuccessor(id) == high && lowSuccessor(id) == low) {
+                r = id;
+                break;
+            }
+        }
+        if (r == -1) {   // no entry was found
+            r = uniqueTableSize();
+            uTable.push_back({high, low, x});
+#ifdef DEBUG
+            std::cout << std::setw(10) << r << std::setw(10) << "" << std::setw(10) << highSuccessor(r)
+                      << std::setw(10) << lowSuccessor(r) << std::setw(10) << topVar(r) << std::endl;
+#endif
+        }
+        return r;
+    }
+
+    /**
+     * Prints contents of uTable to std.
+     */
+    void Manager::printuTable() {
+        std::cout << std::setw(10) << "BDD_ID" << std::setw(10) << "Label" << std::setw(10) << "High" << std::setw(10)
+                  << "Low" << std::setw(10) << "TopVar" << std::endl;
+        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
+            if (isConstant(id) || isVariable(id)) {
+                std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
+                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            } else {
+                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10)
+                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            }
+        }
+    }
+
+    /**
      * Initializes unique table
      *
      * @param
@@ -11,9 +78,9 @@ namespace ClassProject {
      */
     Manager::Manager() {
         // uTable order: HIGH, LOW, TopVar
-        uTable.push_back({0, 0, 0});
+        uTable.push_back({False(), False(), False()});
         topVarNameTable.emplace_back("false");
-        uTable.push_back({1, 1, 1});
+        uTable.push_back({True(), True(), True()});
         topVarNameTable.emplace_back("true");
 #ifdef DEBUG
         printuTable();
@@ -22,7 +89,7 @@ namespace ClassProject {
 
     BDD_ID Manager::createVar(const std::string &label) {
         BDD_ID id = uniqueTableSize();
-        uTable.push_back({1, 0, id});
+        uTable.push_back({True(), False(), id});
         topVarNameTable.emplace_back(label);
 #ifdef DEBUG
         std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
@@ -47,38 +114,7 @@ namespace ClassProject {
     }
 
     bool Manager::isVariable(BDD_ID x) {
-        if (x == topVar(x) && !isConstant(x))
-            return true;
-        else
-            return false;
-    }
-
-    /**
-     * Find or add unique table and eliminate isomorphic sub-graphs
-     *
-     * @param x     variable
-     * @param high  high successor
-     * @param low   low successor
-     * @return      BDD ID of unique table entry
-     */
-    BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
-                                             ClassProject::BDD_ID low) {
-        ClassProject::BDD_ID r = -1;
-        for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
-            if (topVar(id) == x && highSuccessor(id) == high && lowSuccessor(id) == low) {
-                r = id;
-                break;
-            }
-        }
-        if (r == -1) {   // no entry was found
-            r = uniqueTableSize();
-            uTable.push_back({high, low, x});
-#ifdef DEBUG
-            std::cout << std::setw(10) << r << std::setw(10) << "" << std::setw(10) << highSuccessor(r)
-                      << std::setw(10) << lowSuccessor(r) << std::setw(10) << topVar(r) << std::endl;
-#endif
-        }
-        return r;
+        return x == topVar(x) && !isConstant(x);
     }
 
     /**
@@ -99,32 +135,27 @@ namespace ClassProject {
             return e;
         } else if (t == True() and e == False()) {
             return i;
-        } else if (t == False() and e == True()) {
-            if (isVariable(i))
-                return find_or_add_unique_table(topVar(i), t, e);
-            else
-                return topVar(i);
         } /*else if (computed table has entry for (f, g, h)){
             return i;   // eliminate repetitions in computations
         }*/
-        else {
-            // let x be the top-variable of (i, t, e)
-            BDD_ID x = topVar(i);
-            if (topVar(t) < x && isVariable(topVar(t)))
-                x = topVar(t);
-            if (topVar(e) < x && isVariable(topVar(e)))
-                x = topVar(e);
 
-            // ite (7, 0, 1) = neg(7) = 3 = b
-            BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
-            BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
-            if (high == low) { // reduction is possible
-                return high;
-            }
-            BDD_ID r = find_or_add_unique_table(x, high, low);
-            //update_computed_table((f, g, h), r);
-            return r;
-        }
+        // let x be the top-variable of (i, t, e)
+        BDD_ID x = topVar(i);
+        if (topVar(t) < x && !isConstant(t))
+            x = topVar(t);
+        if (topVar(e) < x && !isConstant(e))
+            x = topVar(e);
+
+        // ite (7, 0, 1) = neg(7) = 3 = b
+        BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
+        BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
+        if (high == low)    // reduction is possible
+            return high;
+
+        BDD_ID r = find_or_add_unique_table(x, high, low);
+        //update_computed_table((f, g, h), r);
+        return r;
+
     }
 
     /**
@@ -135,16 +166,14 @@ namespace ClassProject {
      * @return Positive co-factor
      */
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x) {
-        if (isConstant(f) || isConstant(x) || topVar(f) > x) {    // terminal case
+        if (isConstant(f) || isConstant(x) || topVar(f) > x)    // terminal case
             return f;
-        }
-        if (topVar(f) == x) {
+        if (topVar(f) == x)
             return highSuccessor(f);
-        } else {
-            BDD_ID T = coFactorTrue(highSuccessor(f), x);
-            BDD_ID F = coFactorTrue(lowSuccessor(f), x);
-            return ite(topVar(f), T, F);
-        }
+
+        BDD_ID T = coFactorTrue(highSuccessor(f), x);
+        BDD_ID F = coFactorTrue(lowSuccessor(f), x);
+        return ite(topVar(f), T, F);
     }
 
     /**
@@ -155,16 +184,14 @@ namespace ClassProject {
      * @return Negative co-factor
      */
     BDD_ID Manager::coFactorFalse(BDD_ID f, BDD_ID x) {
-        if (isConstant(f) || isConstant(x) || topVar(f) > x) {    // terminal case
+        if (isConstant(f) || isConstant(x) || topVar(f) > x)    // terminal case
             return f;
-        }
-        if (topVar(f) == x) {
+        if (topVar(f) == x)
             return lowSuccessor(f);
-        } else {
-            BDD_ID T = coFactorFalse(highSuccessor(f), x);
-            BDD_ID F = coFactorFalse(lowSuccessor(f), x);
-            return ite(topVar(f), T, F);
-        }
+
+        BDD_ID T = coFactorFalse(highSuccessor(f), x);
+        BDD_ID F = coFactorFalse(lowSuccessor(f), x);
+        return ite(topVar(f), T, F);
     }
 
     /**
@@ -188,11 +215,11 @@ namespace ClassProject {
     }
 
     BDD_ID Manager::and2(BDD_ID a, BDD_ID b) {
-        return ite(a, b, 0);
+        return ite(a, b, False());
     }
 
     BDD_ID Manager::or2(BDD_ID a, BDD_ID b) {
-        return ite(a, 1, b);
+        return ite(a, True(), b);
     }
 
     BDD_ID Manager::xor2(BDD_ID a, BDD_ID b) {
@@ -200,23 +227,23 @@ namespace ClassProject {
     }
 
     BDD_ID Manager::neg(BDD_ID a) {
-        if (isConstant(a)) {
+        return ite(a, False(), True());
+        /*if (isConstant(a)) {
             if (topVar(a) == True())
                 return False();
-            else
-                return True();
+            return True();
         }
         BDD_ID high = neg(highSuccessor(a));
         BDD_ID low = neg(lowSuccessor(a));
-        return ite(topVar(a), high, low);
+        return ite(topVar(a), high, low);*/
     }
 
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b) {
-        return ite(a, neg(b), 1);
+        return ite(a, neg(b), True());
     }
 
     BDD_ID Manager::nor2(BDD_ID a, BDD_ID b) {
-        return ite(a, 0, neg(b));
+        return ite(a, False(), neg(b));
     }
 
     BDD_ID Manager::xnor2(BDD_ID a, BDD_ID b) {
@@ -233,26 +260,6 @@ namespace ClassProject {
         return uTable[f][2];
     }
 
-    /**
-     * Returns the ID of the low successor
-     *
-     * @param f
-     * @return ID of the low successor
-     */
-    BDD_ID Manager::lowSuccessor(BDD_ID f) {
-        return uTable[f][1];
-    }
-
-    /**
-     * Returns the ID of the high successor
-     *
-     * @param f
-     * @return ID of the high successor
-     */
-    BDD_ID Manager::highSuccessor(BDD_ID f) {
-        return uTable[f][0];
-    }
-
     std::string Manager::getTopVarName(const BDD_ID &root) {
         return topVarNameTable[root];
     }
@@ -266,7 +273,7 @@ namespace ClassProject {
      */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {
         nodes_of_root.emplace(root);
-        if (root > 1) {  // terminal case of recursion
+        if (root > True()) {  // terminal case of recursion
             findNodes(highSuccessor(root), nodes_of_root);
             findNodes(lowSuccessor(root), nodes_of_root);
         }
@@ -283,7 +290,7 @@ namespace ClassProject {
         std::set<BDD_ID> nodes_of_root;
         findNodes(root, nodes_of_root);
         for (const auto &node: nodes_of_root) {
-            if (node > 1) {
+            if (node > True()) {
                 vars_of_root.emplace(topVar(node));
             }
         }
@@ -291,25 +298,6 @@ namespace ClassProject {
 
     size_t Manager::uniqueTableSize() {
         return uTable.size();
-    }
-
-    /**
-     * Prints contents of uTable to std.
-     */
-    void Manager::printuTable() {
-        std::cout << std::setw(10) << "BDD_ID" << std::setw(10) << "Label" << std::setw(10) << "High" << std::setw(10)
-                  << "Low" << std::setw(10) << "TopVar" << std::endl;
-        for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
-            if (isConstant(id) || isVariable(id)) {
-                std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
-                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
-                          << std::endl;
-            } else {
-                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10)
-                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
-                          << std::endl;
-            }
-        }
     }
 
     /**
@@ -324,8 +312,8 @@ namespace ClassProject {
         std::ofstream File(filepath);
 
         File << "digraph D {\n";
-        File << 0 << " [shape=box label=\"0\"]\n";
-        File << 1 << " [shape=box label=\"1\"]\n";
+        File << False() << " [shape=box label=\"" << False() << "\"]\n";
+        File << True() << " [shape=box label=\"" << True() << "\"]\n";
         for (auto itr: nodes) {
             if (!isConstant(itr)) {
                 File << itr << " [shape=circle label=\"" << getTopVarName(topVar(itr)) << "\"]\n";

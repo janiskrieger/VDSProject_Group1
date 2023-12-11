@@ -150,10 +150,22 @@ namespace ClassProject {
     }
 
     TEST_F(ManagerTest, xnor2) {
-        BDD_ID id = m->xnor2(a, b);
-        EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), b);
-        EXPECT_EQ(m->coFactorFalse(id), m->neg(b));
+        BDD_ID nota = m->neg(a);
+        BDD_ID notb = m->neg(a);
+        BDD_ID axnorb = m->xnor2(a, b);
+
+        EXPECT_EQ(m->xnor2(0, 0), 1);
+        EXPECT_EQ(m->xnor2(0, 1), 0);
+        EXPECT_EQ(m->xnor2(1, 0), 0);
+        EXPECT_EQ(m->xnor2(1, 1), 1);
+        EXPECT_EQ(m->xnor2(a, 0), nota);
+        EXPECT_EQ(m->xnor2(a, 1), a);
+        EXPECT_EQ(m->xnor2(0, a), nota);
+        EXPECT_EQ(m->xnor2(1, a), a);
+        EXPECT_EQ(m->topVar(axnorb), a);
+        EXPECT_EQ(m->coFactorTrue(axnorb), b);
+        EXPECT_EQ(m->coFactorFalse(axnorb), notb);
+        EXPECT_EQ(m->xnor2(notb, nota), axnorb);
     }
 
     TEST_F(ManagerTest, getTopVarName) {

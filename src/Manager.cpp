@@ -13,12 +13,20 @@ namespace ClassProject {
         topVarNameTable.emplace_back("false");
         uTable.push_back({1, 1, 1});
         topVarNameTable.emplace_back("true");
+#ifdef DEBUG
+        printuTable();
+#endif
     }
 
     BDD_ID Manager::createVar(const std::string &label) {
         BDD_ID id = uniqueTableSize();
         uTable.push_back({1, 0, id});
         topVarNameTable.emplace_back(label);
+#ifdef DEBUG
+        std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
+                  << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
+                  << std::endl;
+#endif
         return id;
     }
 
@@ -86,6 +94,10 @@ namespace ClassProject {
             if (r == -1) {   // no entry was found
                 r = uniqueTableSize();
                 uTable.push_back({high, low, x});
+#ifdef DEBUG
+                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10) << highSuccessor(id)
+                          << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id) << std::endl;
+#endif
             }
             //update_computed_table((f, g, h), r);
             return r;

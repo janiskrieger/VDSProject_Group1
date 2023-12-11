@@ -39,6 +39,8 @@ namespace ClassProject {
 
         BDD_ID highSuccessor(BDD_ID f);
 
+        BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
+
         BDD_ID ite(BDD_ID i, BDD_ID t, BDD_ID e) override;
 
         BDD_ID coFactorTrue(BDD_ID f, BDD_ID x) override;

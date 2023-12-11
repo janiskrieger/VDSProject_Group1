@@ -151,7 +151,7 @@ namespace ClassProject {
 
     TEST_F(ManagerTest, xnor2) {
         BDD_ID nota = m->neg(a);
-        BDD_ID notb = m->neg(a);
+        BDD_ID notb = m->neg(b);
         BDD_ID axnorb = m->xnor2(a, b);
 
         EXPECT_EQ(m->xnor2(0, 0), 1);

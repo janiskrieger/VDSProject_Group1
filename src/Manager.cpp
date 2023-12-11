@@ -1,5 +1,7 @@
 #include "Manager.h"
 
+#define DEBUG
+
 namespace ClassProject {
     /**
      * Initializes unique table
@@ -52,6 +54,34 @@ namespace ClassProject {
     }
 
     /**
+     * Find or add unique table and eliminate isomorphic sub-graphs
+     *
+     * @param x     variable
+     * @param high  high successor
+     * @param low   low successor
+     * @return      BDD ID of unique table entry
+     */
+    BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
+                                             ClassProject::BDD_ID low) {
+        ClassProject::BDD_ID r = -1;
+        for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
+            if (topVar(id) == x && highSuccessor(id) == high && lowSuccessor(id) == low) {
+                r = id;
+                break;
+            }
+        }
+        if (r == -1) {   // no entry was found
+            r = uniqueTableSize();
+            uTable.push_back({high, low, x});
+#ifdef DEBUG
+            std::cout << std::setw(10) << r << std::setw(10) << "" << std::setw(10) << highSuccessor(r)
+                      << std::setw(10) << lowSuccessor(r) << std::setw(10) << topVar(r) << std::endl;
+#endif
+        }
+        return r;
+    }
+
+    /**
      * Implements the if-then-else algorithm.
      *
      * @param i if
@@ -60,13 +90,20 @@ namespace ClassProject {
      * @return Returns the existing or new node representing the ite expression
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
-        // terminal case of recursion  ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
+        // terminal case of recursion
+        // a) ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
+        // b) ite(f, 0, 1) = neg(f)
         if (i == True() || t == e) {
             return t;
         } else if (i == False()) {
             return e;
         } else if (t == True() and e == False()) {
             return i;
+        } else if (t == False() and e == True()) {
+            if (isVariable(i))
+                return find_or_add_unique_table(topVar(i), t, e);
+            else
+                return topVar(i);
         } /*else if (computed table has entry for (f, g, h)){
             return i;   // eliminate repetitions in computations
         }*/
@@ -78,27 +115,13 @@ namespace ClassProject {
             if (topVar(e) < x && isVariable(topVar(e)))
                 x = topVar(e);
 
+            // ite (7, 0, 1) = neg(7) = 3 = b
             BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
             BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
             if (high == low) { // reduction is possible
                 return high;
             }
-            // find or add unique table and eliminate isomorphic sub-graphs
-            ClassProject::BDD_ID r = -1;
-            for (BDD_ID id = 0; id < uniqueTableSize(); id++) {
-                if (topVar(id) == topVar(i) && highSuccessor(id) == t && lowSuccessor(id) == e) {
-                    r = id;
-                    break;
-                }
-            }
-            if (r == -1) {   // no entry was found
-                r = uniqueTableSize();
-                uTable.push_back({high, low, x});
-#ifdef DEBUG
-                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10) << highSuccessor(id)
-                          << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id) << std::endl;
-#endif
-            }
+            BDD_ID r = find_or_add_unique_table(x, high, low);
             //update_computed_table((f, g, h), r);
             return r;
         }
@@ -183,7 +206,9 @@ namespace ClassProject {
             else
                 return True();
         }
-        return ite(topVar(a), neg(highSuccessor(a)), neg(lowSuccessor(a)));
+        BDD_ID high = neg(highSuccessor(a));
+        BDD_ID low = neg(lowSuccessor(a));
+        return ite(topVar(a), high, low);
     }
 
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b) {

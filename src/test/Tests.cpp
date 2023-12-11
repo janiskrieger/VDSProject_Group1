@@ -33,19 +33,19 @@ namespace ClassProject {
 
     TEST_F(ManagerTest, True) {
         // returns the ID of the True node
-        EXPECT_EQ(m->True(), 1);
+        EXPECT_EQ(m->True(), m->True());
     }
 
     TEST_F(ManagerTest, False) {
         // returns the ID of the False node
-        EXPECT_EQ(m->False(), 0);
+        EXPECT_EQ(m->False(), m->False());
     }
 
     TEST_F(ManagerTest, isConstant) {
         // returns true, if the given ID represents a leaf node
         BDD_ID aorb = m->or2(a, b);
-        EXPECT_EQ(m->isConstant(0), true);
-        EXPECT_EQ(m->isConstant(1), true);
+        EXPECT_EQ(m->isConstant(m->False()), true);
+        EXPECT_EQ(m->isConstant(m->True()), true);
         EXPECT_EQ(m->isConstant(a), false);
         EXPECT_EQ(m->isConstant(aorb), false);
     }
@@ -53,16 +53,16 @@ namespace ClassProject {
     TEST_F(ManagerTest, isVariable) {
         // creates a new variable with the given label and returns its ID
         BDD_ID aandb = m->and2(a, b);
-        EXPECT_EQ(m->isVariable(1), false);
+        EXPECT_EQ(m->isVariable(m->True()), false);
         EXPECT_EQ(m->isVariable(a), true);
         EXPECT_EQ(m->isVariable(b), true);
         EXPECT_EQ(m->isVariable(aandb), false);
     }
 
     TEST_F(ManagerTest, ite) {
-        EXPECT_EQ(m->ite(0, a, b), b);
-        EXPECT_EQ(m->ite(1, a, b), a);
-        EXPECT_EQ(m->ite(a, 1, 0), a);
+        EXPECT_EQ(m->ite(m->False(), a, b), b);
+        EXPECT_EQ(m->ite(m->True(), a, b), a);
+        EXPECT_EQ(m->ite(a, m->True(), m->False()), a);
         EXPECT_EQ(m->ite(c, d, d), d);
     }
 
@@ -86,24 +86,24 @@ namespace ClassProject {
         EXPECT_EQ(m->coFactorFalse(f, a), m->and2(b, candd));
         EXPECT_EQ(m->coFactorFalse(f, a), m->coFactorFalse(f));
         EXPECT_EQ(m->coFactorFalse(f, b), m->and2(a, candd));
-        EXPECT_EQ(m->coFactorFalse(f, c), 0);
-        EXPECT_EQ(m->coFactorFalse(f, d), 0);
+        EXPECT_EQ(m->coFactorFalse(f, c), m->False());
+        EXPECT_EQ(m->coFactorFalse(f, d), m->False());
     }
 
     TEST_F(ManagerTest, and2) {
         BDD_ID id = m->and2(a, b);
         EXPECT_EQ(m->topVar(id), a);
         EXPECT_EQ(m->coFactorTrue(id), b);
-        EXPECT_EQ(m->coFactorFalse(id), 0);
+        EXPECT_EQ(m->coFactorFalse(id), m->False());
     }
 
     TEST_F(ManagerTest, or2) {
         BDD_ID id = m->or2(a, b);
         EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), 1);
+        EXPECT_EQ(m->coFactorTrue(id), m->True());
         EXPECT_EQ(m->coFactorFalse(id), b);
         BDD_ID id2 = m->or2(d, c);
-        EXPECT_EQ(m->coFactorTrue(id2, c), 1);
+        EXPECT_EQ(m->coFactorTrue(id2, c), m->True());
         EXPECT_EQ(m->coFactorFalse(id2), d);
     }
 
@@ -139,13 +139,13 @@ namespace ClassProject {
         BDD_ID id = m->nand2(a, b);
         EXPECT_EQ(m->topVar(id), a);
         EXPECT_EQ(m->coFactorTrue(id), m->neg(b));
-        EXPECT_EQ(m->coFactorFalse(id), 1);
+        EXPECT_EQ(m->coFactorFalse(id), m->True());
     }
 
     TEST_F(ManagerTest, nor2) {
         BDD_ID id = m->nor2(a, b);
         EXPECT_EQ(m->topVar(id), a);
-        EXPECT_EQ(m->coFactorTrue(id), 0);
+        EXPECT_EQ(m->coFactorTrue(id), m->False());
         EXPECT_EQ(m->coFactorFalse(id), m->neg(b));
     }
 
@@ -154,14 +154,14 @@ namespace ClassProject {
         BDD_ID notb = m->neg(b);
         BDD_ID axnorb = m->xnor2(a, b);
 
-        EXPECT_EQ(m->xnor2(0, 0), 1);
-        EXPECT_EQ(m->xnor2(0, 1), 0);
-        EXPECT_EQ(m->xnor2(1, 0), 0);
-        EXPECT_EQ(m->xnor2(1, 1), 1);
-        EXPECT_EQ(m->xnor2(a, 0), nota);
-        EXPECT_EQ(m->xnor2(a, 1), a);
-        EXPECT_EQ(m->xnor2(0, a), nota);
-        EXPECT_EQ(m->xnor2(1, a), a);
+        EXPECT_EQ(m->xnor2(m->False(), m->False()), m->True());
+        EXPECT_EQ(m->xnor2(m->False(), m->True()), m->False());
+        EXPECT_EQ(m->xnor2(m->True(), m->False()), m->False());
+        EXPECT_EQ(m->xnor2(m->True(), m->True()), m->True());
+        EXPECT_EQ(m->xnor2(a, m->False()), nota);
+        EXPECT_EQ(m->xnor2(a, m->True()), a);
+        EXPECT_EQ(m->xnor2(m->False(), a), nota);
+        EXPECT_EQ(m->xnor2(m->True(), a), a);
         EXPECT_EQ(m->topVar(axnorb), a);
         EXPECT_EQ(m->coFactorTrue(axnorb), b);
         EXPECT_EQ(m->coFactorFalse(axnorb), notb);
@@ -170,8 +170,8 @@ namespace ClassProject {
 
     TEST_F(ManagerTest, getTopVarName) {
         // returns the label of the given BDD_ID
-        EXPECT_EQ(m->getTopVarName(0), "false");
-        EXPECT_EQ(m->getTopVarName(1), "true");
+        EXPECT_EQ(m->getTopVarName(m->False()), "false");
+        EXPECT_EQ(m->getTopVarName(m->True()), "true");
         EXPECT_EQ(m->getTopVarName(a), "a");
     }
 
@@ -189,9 +189,9 @@ namespace ClassProject {
         ClassProject::BDD_ID candd = m->and2(c, d);
         ClassProject::BDD_ID f = m->and2(aorb, candd);
 
-        std::set<BDD_ID> expected = {8, 7, 5, 1, 0};
+        std::set<BDD_ID> expected = {m->and2(b,candd), candd, d, m->True(), m->False()};
         std::set<BDD_ID> nodes;
-        m->findNodes(8, nodes);
+        m->findNodes(m->and2(b,candd), nodes);
 
         EXPECT_THAT(nodes, SetEq(expected));
     }
@@ -208,7 +208,7 @@ namespace ClassProject {
 
         std::set<BDD_ID> expected = {m->topVar(b), m->topVar(c), m->topVar(d)};
         std::set<BDD_ID> vars;
-        m->findVars(8, vars);
+        m->findVars(m->and2(b,candd), vars);
 
         EXPECT_THAT(vars, SetEq(expected));
     }

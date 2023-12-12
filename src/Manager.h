@@ -13,15 +13,23 @@
 #include <iomanip>
 
 namespace ClassProject {
+    struct uTableEntry {
+        BDD_ID id;
+        BDD_ID high;
+        BDD_ID low;
+        BDD_ID topVar;
+        std::string label;
+    };
 
     class Manager : public ManagerInterface {
     private:
-        std::vector<std::array<BDD_ID, 3> > uTable;
-        std::vector<std::string> topVarNameTable;
+        std::vector<uTableEntry> unique_table;
+
+        void init_unique_table();
 
         BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
 
-        void printuTable();
+        void print_unique_table();
 
     public:
         Manager();

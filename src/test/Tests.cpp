@@ -4,7 +4,7 @@
 #include "Tests.h"
 
 namespace ClassProject {
-    class ManagerTest : public ::testing::Test {
+    class ManagerTest : public testing::Test {  /* NOLINT */
     protected:
         Manager *m;
         BDD_ID a;

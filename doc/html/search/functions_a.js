@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['printutable_78',['printuTable',['../class_class_project_1_1_manager.html#a334bc80806eb3c3c21c9a7ccb5901e45',1,'ClassProject::Manager']]]
+  ['uniquetablesize_78',['uniqueTableSize',['../class_class_project_1_1_manager.html#a0724a85292854fe2179b92d6c1aaf2ed',1,'ClassProject::Manager::uniqueTableSize()'],['../class_class_project_1_1_manager_interface.html#a85cac80444b26e5b80eb96b9f1231c0e',1,'ClassProject::ManagerInterface::uniqueTableSize()']]]
 ];

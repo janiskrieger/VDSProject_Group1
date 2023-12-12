@@ -19,10 +19,6 @@ namespace ClassProject {
         std::vector<std::array<BDD_ID, 3> > uTable;
         std::vector<std::string> topVarNameTable;
 
-        BDD_ID lowSuccessor(BDD_ID f);
-
-        BDD_ID highSuccessor(BDD_ID f);
-
         BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
 
         void printuTable();

@@ -1,77 +1,8 @@
 #include "Manager.h"
 
-#define DEBUG
-
 namespace ClassProject {
     /**
-     * Returns the ID of the low successor
-     *
-     * @param f
-     * @return ID of the low successor
-     */
-    BDD_ID Manager::lowSuccessor(BDD_ID f) {
-        return uTable[f][1];
-    }
-
-    /**
-     * Returns the ID of the high successor
-     *
-     * @param f
-     * @return ID of the high successor
-     */
-    BDD_ID Manager::highSuccessor(BDD_ID f) {
-        return uTable[f][0];
-    }
-
-    /**
-     * Find or add unique table and eliminate isomorphic sub-graphs
-     *
-     * @param x     variable
-     * @param high  high successor
-     * @param low   low successor
-     * @return      BDD ID of unique table entry
-     */
-    BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
-                                             ClassProject::BDD_ID low) {
-        ClassProject::BDD_ID r = -1;
-        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
-            if (topVar(id) == x && highSuccessor(id) == high && lowSuccessor(id) == low) {
-                r = id;
-                break;
-            }
-        }
-        if (r == -1) {   // no entry was found
-            r = uniqueTableSize();
-            uTable.push_back({high, low, x});
-#ifdef DEBUG
-            std::cout << std::setw(10) << r << std::setw(10) << "" << std::setw(10) << highSuccessor(r)
-                      << std::setw(10) << lowSuccessor(r) << std::setw(10) << topVar(r) << std::endl;
-#endif
-        }
-        return r;
-    }
-
-    /**
-     * Prints contents of uTable to std.
-     */
-    void Manager::printuTable() {
-        std::cout << std::setw(10) << "BDD_ID" << std::setw(10) << "Label" << std::setw(10) << "High" << std::setw(10)
-                  << "Low" << std::setw(10) << "TopVar" << std::endl;
-        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
-            if (isConstant(id) || isVariable(id)) {
-                std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
-                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
-                          << std::endl;
-            } else {
-                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10)
-                          << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
-                          << std::endl;
-            }
-        }
-    }
-
-    /**
-     * Initializes unique table
+     * Initializes the unique table with the true and false node.
      *
      * @param
      * @return
@@ -82,184 +13,233 @@ namespace ClassProject {
         topVarNameTable.emplace_back("false");
         uTable.push_back({True(), True(), True()});
         topVarNameTable.emplace_back("true");
-#ifdef DEBUG
-        printuTable();
-#endif
     }
-
+    /**
+     * Creates a new variable with the given label and returns its ID.
+     *
+     * @param label Label of variable to be created
+     * @return The ID of the newly created variable
+     */
     BDD_ID Manager::createVar(const std::string &label) {
         BDD_ID id = uniqueTableSize();
         uTable.push_back({True(), False(), id});
         topVarNameTable.emplace_back(label);
-#ifdef DEBUG
-        std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
-                  << highSuccessor(id) << std::setw(10) << lowSuccessor(id) << std::setw(10) << topVar(id)
-                  << std::endl;
-#endif
         return id;
     }
 
+    /**
+     * Returns the ID of the True node.
+     *
+     * @return The ID of the True node
+     */
     const BDD_ID &Manager::True() {
         static const BDD_ID val = 1;
         return val;
     }
 
+    /**
+     * Returns the ID of the False node.
+     *
+     * @return The ID of the False node
+     */
     const BDD_ID &Manager::False() {
         static const BDD_ID val = 0;
         return val;
     }
 
+    /**
+     * Returns true, if the given ID represents a leaf node.
+     *
+     * @param f Node
+     * @return Returns true, if the given ID represents a leaf node
+     */
     bool Manager::isConstant(BDD_ID f) {
         return f == True() || f == False();
     }
 
+    /**
+    * Returns true, if the given ID represents a variable.
+     *
+    * @param f Node
+    * @return Returns true, if the given ID represents a variable
+    */
     bool Manager::isVariable(BDD_ID x) {
         return x == topVar(x) && !isConstant(x);
     }
 
     /**
-     * Implements the if-then-else algorithm.
+    * Returns the top variable ID of the given node.
      *
-     * @param i if
-     * @param t then
-     * @param e else
-     * @return Returns the existing or new node representing the ite expression
+    * @param f Node
+    * @return The top variable ID of the given node
+    */
+    BDD_ID Manager::topVar(BDD_ID f) {
+        return uTable[f][2];
+    }
+
+    /**
+     * Implements the if-then-else algorithm, which most of the following functions are based on. Returns the existing
+     * or new node that represents the given expression.
+     *
+     * @param i Node (if)
+     * @param t Node (then)
+     * @param e Node (else)
+     * @return The existing or new node that represents the given expression
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) {
         // terminal case of recursion
-        // a) ite(1, f, g) = ite(0, g, f) = ite(f, 1, 0) = ite(g, f, f) = f
-        // b) ite(f, 0, 1) = neg(f)
-        if (i == True() || t == e) {
-            return t;
-        } else if (i == False()) {
-            return e;
-        } else if (t == True() and e == False()) {
-            return i;
-        } /*else if (computed table has entry for (f, g, h)){
-            return i;   // eliminate repetitions in computations
-        }*/
+        if (i == True() || t == e) return t;
+        else if (i == False()) return e;
+        else if (t == True() and e == False()) return i;
 
         // let x be the top-variable of (i, t, e)
         BDD_ID x = topVar(i);
-        if (topVar(t) < x && !isConstant(t))
-            x = topVar(t);
-        if (topVar(e) < x && !isConstant(e))
-            x = topVar(e);
+        if (topVar(t) < x && !isConstant(t)) x = topVar(t);
+        if (topVar(e) < x && !isConstant(e)) x = topVar(e);
 
-        // ite (7, 0, 1) = neg(7) = 3 = b
         BDD_ID high = ite(coFactorTrue(i, x), coFactorTrue(t, x), coFactorTrue(e, x));
         BDD_ID low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
-        if (high == low)    // reduction is possible
-            return high;
+        if (high == low) return high; // reduction is possible
 
         BDD_ID r = find_or_add_unique_table(x, high, low);
-        //update_computed_table((f, g, h), r);
         return r;
 
     }
 
     /**
-     * Returns the positive co-factor of the function f with regard to variable x.
+     * Returns the positive co-factor of the function represented by ID f with regards to variable x.
      *
      * @param f Function represented by ID
-     * @param x Co-factor variable
-     * @return Positive co-factor
+     * @param x Variable
+     * @return The positive co-factor
      */
     BDD_ID Manager::coFactorTrue(BDD_ID f, BDD_ID x) {
-        if (isConstant(f) || isConstant(x) || topVar(f) > x)    // terminal case
-            return f;
-        if (topVar(f) == x)
-            return highSuccessor(f);
+        if (isConstant(f) || isConstant(x) || topVar(f) > x) return f;   // terminal case
+        if (topVar(f) == x) return coFactorTrue(f);
 
-        BDD_ID T = coFactorTrue(highSuccessor(f), x);
-        BDD_ID F = coFactorTrue(lowSuccessor(f), x);
+        BDD_ID T = coFactorTrue(coFactorTrue(f), x);
+        BDD_ID F = coFactorTrue(coFactorFalse(f), x);
         return ite(topVar(f), T, F);
     }
 
     /**
-     * Returns the negative co-factor of the function f with regard to variable x.
+     * Returns the negative co-factor of the function represented by ID f with regards to variable x.
      *
      * @param f Function represented by ID
-     * @param x Co-factor variable
-     * @return Negative co-factor
+     * @param x Variable
+     * @return The negative co-factor
      */
     BDD_ID Manager::coFactorFalse(BDD_ID f, BDD_ID x) {
-        if (isConstant(f) || isConstant(x) || topVar(f) > x)    // terminal case
-            return f;
-        if (topVar(f) == x)
-            return lowSuccessor(f);
+        if (isConstant(f) || isConstant(x) || topVar(f) > x) return f;  // terminal case
+        if (topVar(f) == x) return coFactorFalse(f);
 
-        BDD_ID T = coFactorFalse(highSuccessor(f), x);
-        BDD_ID F = coFactorFalse(lowSuccessor(f), x);
+        BDD_ID T = coFactorFalse(coFactorTrue(f), x);
+        BDD_ID F = coFactorFalse(coFactorFalse(f), x);
         return ite(topVar(f), T, F);
     }
 
     /**
-     * Returns the positive co-factor of the function f with regard to its top variable.
+     * Returns the positive co-factor of the function represented by ID f with regards to its top variable.
      *
      * @param f Function represented by ID
-     * @return Positive co-factor
+     * @return The positive co-factor
      */
     BDD_ID Manager::coFactorTrue(BDD_ID f) {
-        return coFactorTrue(f, topVar(f));
+        return uTable[f][0];
     }
 
     /**
-     * Returns the negative co-factor of the function f with regard to its top variable.
+     * Returns the positive co-factor of the function represented by ID f with regards to its top variable.
      *
      * @param f Function represented by ID
-     * @return Negative co-factor
+     * @return The negative co-factor
      */
     BDD_ID Manager::coFactorFalse(BDD_ID f) {
-        return coFactorFalse(f, topVar(f));
+        return uTable[f][1];
     }
 
+    /**
+     * Returns the ID representing the resulting function of a * b.
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of a * b
+     */
     BDD_ID Manager::and2(BDD_ID a, BDD_ID b) {
         return ite(a, b, False());
     }
 
+    /**
+     * Returns the ID representing the resulting function of a + b.
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of a + b
+     */
     BDD_ID Manager::or2(BDD_ID a, BDD_ID b) {
         return ite(a, True(), b);
     }
 
+    /**
+     * Returns the ID representing the resulting function of a xor b.
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of a xor b
+     */
     BDD_ID Manager::xor2(BDD_ID a, BDD_ID b) {
         return ite(a, neg(b), b);
     }
 
+    /**
+     * Returns the ID representing the negation of the given function.
+     *
+     * @param a ID of variable a
+     * @return The ID representing the negation of the given function
+     */
     BDD_ID Manager::neg(BDD_ID a) {
         return ite(a, False(), True());
-        /*if (isConstant(a)) {
-            if (topVar(a) == True())
-                return False();
-            return True();
-        }
-        BDD_ID high = neg(highSuccessor(a));
-        BDD_ID low = neg(lowSuccessor(a));
-        return ite(topVar(a), high, low);*/
     }
 
+    /**
+     * Returns the ID representing the resulting function of ~(a * b).
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of ~(a * b).
+     */
     BDD_ID Manager::nand2(BDD_ID a, BDD_ID b) {
         return ite(a, neg(b), True());
     }
 
+    /**
+     * Returns the ID representing the resulting function of ~(a + b).
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of ~(a + b).
+     */
     BDD_ID Manager::nor2(BDD_ID a, BDD_ID b) {
         return ite(a, False(), neg(b));
     }
 
+    /**
+     * Returns the ID representing the resulting function of ~(a xor b).
+     *
+     * @param a ID of variable a
+     * @param b ID of variable b
+     * @return The ID representing the resulting function of ~(a xor b).
+     */
     BDD_ID Manager::xnor2(BDD_ID a, BDD_ID b) {
         return ite(a, b, neg(b));
     }
 
     /**
-     * Returns the ID of the top variable.
+     * Returns the label of the top variable of root.
      *
-     * @param f
-     * @return ID of the top variable
+     * @param root ID of root variable
+     * @return The label of the top variable of root
      */
-    BDD_ID Manager::topVar(BDD_ID f) {
-        return uTable[f][2];
-    }
-
     std::string Manager::getTopVarName(const BDD_ID &root) {
         return topVarNameTable[root];
     }
@@ -268,14 +248,14 @@ namespace ClassProject {
      * This function takes a node root and an empty set nodes of root. It returns the set of all nodes which are
      * reachable from root including itself.
      *
-     * @param root Root node
+     * @param root ID of root node
      * @param nodes_of_root Empty set nodes of root
      */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {
         nodes_of_root.emplace(root);
         if (root > True()) {  // terminal case of recursion
-            findNodes(highSuccessor(root), nodes_of_root);
-            findNodes(lowSuccessor(root), nodes_of_root);
+            findNodes(coFactorTrue(root), nodes_of_root);
+            findNodes(coFactorFalse(root), nodes_of_root);
         }
     }
 
@@ -283,7 +263,7 @@ namespace ClassProject {
      * This function takes a node root and an empty set vars of root. It returns the set of all variables which are
      * reachable from root including itself.
      *
-     * @param root Root node
+     * @param root ID of root node
      * @param vars_of_root Empty set vars of root
      */
     void Manager::findVars(const BDD_ID &root, std::set<BDD_ID> &vars_of_root) {
@@ -296,6 +276,11 @@ namespace ClassProject {
         }
     }
 
+    /**
+     * Returns the number of nodes currently existing in the unique table of the Manager class.
+     *
+     * @return The number of nodes currently existing in the unique table of the Manager class
+     */
     size_t Manager::uniqueTableSize() {
         return uTable.size();
     }
@@ -303,7 +288,7 @@ namespace ClassProject {
     /**
      * Creates a file that contains a visual representation of the BDD represented by the root node in the DOT format.
      *
-     * @param filepath Filepath
+     * @param filepath Filepath to file
      * @param root Root node
      */
     void Manager::visualizeBDD(std::string filepath, BDD_ID &root) {
@@ -317,11 +302,54 @@ namespace ClassProject {
         for (auto itr: nodes) {
             if (!isConstant(itr)) {
                 File << itr << " [shape=circle label=\"" << getTopVarName(topVar(itr)) << "\"]\n";
-                File << itr << " -> " << lowSuccessor(itr) << " [style=dashed]\n";
-                File << itr << " -> " << highSuccessor(itr) << "\n";
+                File << itr << " -> " << coFactorFalse(itr) << " [style=dashed]\n";
+                File << itr << " -> " << coFactorTrue(itr) << "\n";
             }
         }
         File << "}";
         File.close();
+    }
+
+    /**
+     * Find or add unique table and eliminate isomorphic sub-graphs
+     *
+     * @param x     Variable
+     * @param high  High successor
+     * @param low   Low successor
+     * @return      ID of unique table entry
+     */
+    BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
+                                             ClassProject::BDD_ID low) {
+        ClassProject::BDD_ID r = -1;
+        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
+            if (topVar(id) == x && coFactorTrue(id) == high && coFactorFalse(id) == low) {
+                r = id;
+                break;
+            }
+        }
+        if (r == -1) {   // no entry was found
+            r = uniqueTableSize();
+            uTable.push_back({high, low, x});
+        }
+        return r;
+    }
+
+    /**
+     * Prints a formatted unique table to standart out.
+     */
+    void Manager::printuTable() {
+        std::cout << std::setw(10) << "BDD_ID" << std::setw(10) << "Label" << std::setw(10) << "High" << std::setw(10)
+                  << "Low" << std::setw(10) << "TopVar" << std::endl;
+        for (BDD_ID id = False(); id < uniqueTableSize(); id++) {
+            if (isConstant(id) || isVariable(id)) {
+                std::cout << std::setw(10) << id << std::setw(10) << getTopVarName(id) << std::setw(10)
+                          << coFactorTrue(id) << std::setw(10) << coFactorFalse(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            } else {
+                std::cout << std::setw(10) << id << std::setw(10) << "" << std::setw(10)
+                          << coFactorTrue(id) << std::setw(10) << coFactorFalse(id) << std::setw(10) << topVar(id)
+                          << std::endl;
+            }
+        }
     }
 }

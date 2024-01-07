@@ -4,6 +4,7 @@ var dir_68267d1309a1af8e8297ef4c3efbcdba =
     [ "main.cpp", "main_8cpp.html", "main_8cpp" ],
     [ "Manager.cpp", "_manager_8cpp.html", null ],
     [ "Manager.h", "_manager_8h.html", [
+      [ "uTableEntry", "struct_class_project_1_1u_table_entry.html", "struct_class_project_1_1u_table_entry" ],
       [ "Manager", "class_class_project_1_1_manager.html", "class_class_project_1_1_manager" ]
     ] ],
     [ "ManagerInterface.h", "_manager_interface_8h.html", "_manager_interface_8h" ]

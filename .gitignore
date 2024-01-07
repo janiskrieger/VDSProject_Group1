@@ -1,3 +1,4 @@
 gtest/
 build/
 .idea/
+cmake-build-release/

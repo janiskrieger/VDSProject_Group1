@@ -326,7 +326,7 @@ namespace ClassProject {
             }
         }
         BDD_ID id = uniqueTableSize();
-        unique_table.push_back((uTableEntry) {.id=id, .high=high, .low=low, .topVar=x, .label=""});
+        unique_table.push_back((uTableEntry) {.id=id, .high=high, .low=low, .topVar=x, .label=getTopVarName(x)});
         return id;
     }
 

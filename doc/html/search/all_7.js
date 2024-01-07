@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['nand2_20',['nand2',['../class_class_project_1_1_manager_interface.html#a650bcb03b7be6f306f0c28f3b0fd3299',1,'ClassProject::ManagerInterface']]],
-  ['neg_21',['neg',['../class_class_project_1_1_manager_interface.html#a8e7b062caaef78d651a4057f136709fd',1,'ClassProject::ManagerInterface']]],
-  ['nor2_22',['nor2',['../class_class_project_1_1_manager_interface.html#ad94d6df82dfd51cf8d4d1f5b2b62dca8',1,'ClassProject::ManagerInterface']]]
+  ['id_23',['id',['../struct_class_project_1_1u_table_entry.html#a8ace092c4f8c9fa801d80c2848373fc2',1,'ClassProject::uTableEntry']]],
+  ['isconstant_24',['isConstant',['../class_class_project_1_1_manager.html#ae36938ae525ced7bdc16d3a7353827dd',1,'ClassProject::Manager::isConstant()'],['../class_class_project_1_1_manager_interface.html#a4595e13104cdb6294df54b23393928e2',1,'ClassProject::ManagerInterface::isConstant()']]],
+  ['isvariable_25',['isVariable',['../class_class_project_1_1_manager.html#a36a24053561d59b05e671a14e85d1965',1,'ClassProject::Manager::isVariable()'],['../class_class_project_1_1_manager_interface.html#ad2cf78319932123def1f0f0b02ae651b',1,'ClassProject::ManagerInterface::isVariable()']]],
+  ['ite_26',['ite',['../class_class_project_1_1_manager.html#a4d79fa44b2e066c3ab3ff0bdbb8716de',1,'ClassProject::Manager::ite()'],['../class_class_project_1_1_manager_interface.html#a452e85ca74c513a42aae44e2b9512d72',1,'ClassProject::ManagerInterface::ite()']]]
 ];

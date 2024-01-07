@@ -1,8 +1,14 @@
-<map id="/home/janis/Seafile/uni/VDS/VDSProject_Group1/src/test/Tests.h" name="/home/janis/Seafile/uni/VDS/VDSProject_Group1/src/test/Tests.h">
-<area shape="rect" id="node1" title=" " alt="" coords="33,5,210,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="5,109,109,136"/>
-<area shape="rect" id="node3" href="$_manager_8h.html" title=" " alt="" coords="134,109,237,136"/>
-<area shape="rect" id="node4" href="$_manager_interface_8h.html" title=" " alt="" coords="111,184,260,211"/>
-<area shape="rect" id="node5" title=" " alt="" coords="119,259,177,285"/>
-<area shape="rect" id="node6" title=" " alt="" coords="201,259,244,285"/>
+<map id="src/test/Tests.h" name="src/test/Tests.h">
+<area shape="rect" id="node1" title=" " alt="" coords="142,5,261,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="9,80,113,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="138,80,265,107"/>
+<area shape="rect" id="node4" href="$_manager_8h.html" title=" " alt="" coords="289,80,391,107"/>
+<area shape="rect" id="node5" href="$_manager_interface_8h.html" title=" " alt="" coords="5,155,155,181"/>
+<area shape="rect" id="node8" title=" " alt="" coords="179,155,242,181"/>
+<area shape="rect" id="node9" title=" " alt="" coords="267,155,323,181"/>
+<area shape="rect" id="node10" title=" " alt="" coords="347,155,427,181"/>
+<area shape="rect" id="node11" title=" " alt="" coords="451,155,525,181"/>
+<area shape="rect" id="node12" title=" " alt="" coords="549,155,624,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="13,229,72,256"/>
+<area shape="rect" id="node7" title=" " alt="" coords="96,229,139,256"/>
 </map>

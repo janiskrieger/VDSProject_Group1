@@ -6,6 +6,7 @@
 #define VDSPROJECT_TESTS_H
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 #include "../Manager.h"
 
 #endif

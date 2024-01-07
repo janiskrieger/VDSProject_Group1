@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['xnor2_59',['xnor2',['../class_class_project_1_1_manager_interface.html#a1ec3736db77110a248382825f71fce21',1,'ClassProject::ManagerInterface']]],
-  ['xor2_60',['xor2',['../class_class_project_1_1_manager_interface.html#acfeadcf9b96defdee3b113ca091d1fbf',1,'ClassProject::ManagerInterface']]]
+  ['visualizebdd_95',['visualizeBDD',['../class_class_project_1_1_manager.html#a1aaa80c8dd2370b4359ba155518110bc',1,'ClassProject::Manager::visualizeBDD()'],['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface::visualizeBDD()']]]
 ];

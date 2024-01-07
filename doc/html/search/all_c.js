@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['xnor2_29',['xnor2',['../class_class_project_1_1_manager_interface.html#a1ec3736db77110a248382825f71fce21',1,'ClassProject::ManagerInterface']]],
-  ['xor2_30',['xor2',['../class_class_project_1_1_manager_interface.html#acfeadcf9b96defdee3b113ca091d1fbf',1,'ClassProject::ManagerInterface']]]
+  ['setup_46',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]]
 ];

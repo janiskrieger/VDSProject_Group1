@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['isconstant_10',['isConstant',['../class_class_project_1_1_manager_interface.html#a4595e13104cdb6294df54b23393928e2',1,'ClassProject::ManagerInterface']]],
-  ['isvariable_11',['isVariable',['../class_class_project_1_1_manager_interface.html#ad2cf78319932123def1f0f0b02ae651b',1,'ClassProject::ManagerInterface']]],
-  ['ite_12',['ite',['../class_class_project_1_1_manager_interface.html#a452e85ca74c513a42aae44e2b9512d72',1,'ClassProject::ManagerInterface']]]
+  ['gettopvarname_21',['getTopVarName',['../class_class_project_1_1_manager.html#af2dc7afe27497b80c5f1f3f63977f69a',1,'ClassProject::Manager::getTopVarName()'],['../class_class_project_1_1_manager_interface.html#afde45b2065361dfa6e61c1c7bc3fc1b4',1,'ClassProject::ManagerInterface::getTopVarName()']]]
 ];

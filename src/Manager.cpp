@@ -88,10 +88,13 @@ namespace ClassProject {
      */
     BDD_ID Manager::ite(BDD_ID i, BDD_ID t, BDD_ID e) { /* NOLINT */
         // terminal case of recursion
+        BDD_ID r;
         if (i == True() || t == e) return t;
         else if (i == False()) return e;
         else if (t == True() and e == False()) return i;
-
+        else if (computedTable.hasEntry(i, t, e, &r)){
+            return r;
+        }
         // let x be the top-variable of (i, t, e)
         BDD_ID x = topVar(i);
         if (topVar(t) < x && !isConstant(t)) x = topVar(t);
@@ -101,7 +104,8 @@ namespace ClassProject {
         BDD_ID r_low = ite(coFactorFalse(i, x), coFactorFalse(t, x), coFactorFalse(e, x));
         if (r_high == r_low) return r_high; // reduction is possible
 
-        BDD_ID r = find_or_add_unique_table(x, r_high, r_low);
+        r = find_or_add_unique_table(x, r_high, r_low);
+        computedTable.insert(i, t, e, r);
         return r;
 
     }
@@ -347,5 +351,34 @@ namespace ClassProject {
                           << std::endl;
             }
         }
+    }
+
+    /**
+     *
+     * @param f
+     * @param g
+     * @param h
+     * @return
+     */
+    size_t HashTable::hash(BDD_ID f, BDD_ID g, BDD_ID h) {
+        return ((((f << 21) + g) << 21) + h) % tableSize;
+    }
+
+    HashTable::HashTable() {
+
+    }
+
+    void HashTable::insert(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID r) {
+        size_t index = hash(f, g, h);
+        table[index] = (hashTableEntry) {.f=f, .g=g, .h=h, .r=r};
+    }
+
+    bool HashTable::hasEntry(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID *r) {
+        hashTableEntry data = table[hash(f, g, h)];
+        if (data.f == f && data.g == g && data.h == h){
+            *r = data.r;
+            return true;
+        }
+        return false;
     }
 }

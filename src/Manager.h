@@ -21,9 +21,33 @@ namespace ClassProject {
         std::string label;
     };
 
+    struct hashTableEntry{
+        BDD_ID f;
+        BDD_ID g;
+        BDD_ID h;
+        BDD_ID r;
+    };
+
+    class HashTable{
+    private:
+        static const unsigned int tableSize = 100000;
+        std::array<hashTableEntry, tableSize> table;
+
+        size_t hash(BDD_ID f, BDD_ID g, BDD_ID h);
+    public:
+        HashTable();
+
+        ~HashTable() = default;
+
+        void insert(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID r);
+
+        bool hasEntry(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID *r);
+    };
+
     class Manager : public ManagerInterface {
     private:
         std::vector<uTableEntry> unique_table;
+        HashTable computedTable;
 
         void init_unique_table();
 

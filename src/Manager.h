@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <unordered_map>
 
 namespace ClassProject {
     struct uTableEntry {
@@ -21,33 +22,13 @@ namespace ClassProject {
         std::string label;
     };
 
-    struct hashTableEntry{
-        BDD_ID f;
-        BDD_ID g;
-        BDD_ID h;
-        BDD_ID r;
-    };
-
-    class HashTable{
-    private:
-        static const unsigned int tableSize = 100000;
-        std::array<hashTableEntry, tableSize> table;
-
-        size_t hash(BDD_ID f, BDD_ID g, BDD_ID h);
-    public:
-        HashTable();
-
-        ~HashTable() = default;
-
-        void insert(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID r);
-
-        bool hasEntry(BDD_ID f, BDD_ID g, BDD_ID h, BDD_ID *r);
-    };
-
     class Manager : public ManagerInterface {
     private:
         std::vector<uTableEntry> unique_table;
-        HashTable computedTable;
+        std::unordered_map<size_t, BDD_ID> unique_table_map;
+        std::unordered_map<std::size_t, BDD_ID> computed_table;
+
+        static size_t hashFunction(BDD_ID f, BDD_ID g, BDD_ID h);
 
         void init_unique_table();
 

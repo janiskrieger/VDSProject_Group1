@@ -96,7 +96,42 @@ namespace ClassProject {
         if (i == True() || t == e) return t;
         else if (i == False()) return e;
         else if (t == True() and e == False()) return i;
-        else if (auto search = computed_table.find(hashFunction(i, t, e)); search != computed_table.end()){
+        //else if (t == False() and e == True()) return neg(i);
+        else if (!isConstant(t) && !isConstant(e)) { // Standard Triples
+            // simplification of arguments
+            if (i == t) t = True();                // ite (F,F,G) = ite (F,1,G)
+            else if (i == e) e = False();          // ite(F,G,F) = ite(F,G,0)
+            else if (i == neg(e)) e = True();   // ite(F,G,~F) = ite (F,G,1)
+            else if (i == neg(t)) t = False();  // ite(F,~F,G) = ite (F,0,G)
+
+            // equivalent pairs
+            if (t == True() && i > e)              // ite(F,1,G) = ite(G,1,F)
+                swapID(&i, &e);
+            else if (e == False() && i > t)        // ite(F,G,0) = ite(G,F,0)
+                swapID(&i, &t);
+            else if (e == True() && i > t) {       // ite(F,G,1) = ite(~G,~F,1)
+                i = neg(i);
+                t = neg(t);
+                swapID(&i, &t);
+            }else if (t == False() && i > e) {     // ite(F,0,G) = ite(~G,0,~F)
+                i = neg(i);
+                e = neg(e);
+                swapID(&i, &e);
+            }else if (t == neg(e) && i > t) {   // ite(F,G,~G) = ite(G,F,~F)
+                swapID(&i, &t);
+                e = neg(t);
+            }
+
+            // complement edges
+            if (i != t && i != e && t != e){    // F != G != H
+                if (t > e){                     // ite(F,G,H) = ite(~F,H,G)
+                    i = neg(i);
+                    swapID(&t, &e);
+                }
+            }
+        }
+
+        if (auto search = computed_table.find(hashFunction(i, t, e)); search != computed_table.end()){
             return search->second;
         }
         // let x be the top-variable of (i, t, e)
@@ -358,5 +393,11 @@ namespace ClassProject {
 
     size_t Manager::hashFunction(BDD_ID f, BDD_ID g, BDD_ID h) {
         return (((f << 21) + g) << 21) + h;
+    }
+
+    void Manager::swapID(BDD_ID *a, BDD_ID *b) {
+            BDD_ID temp = *a;
+            *a = *b;
+            *b = temp;
     }
 }

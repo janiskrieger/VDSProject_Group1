@@ -36,6 +36,8 @@ namespace ClassProject {
 
         void print_unique_table();
 
+        void swapID (BDD_ID *a, BDD_ID *b);
+
     public:
         Manager();
 

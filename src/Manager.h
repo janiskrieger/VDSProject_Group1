@@ -26,7 +26,7 @@ namespace ClassProject {
     private:
         std::vector<uTableEntry> unique_table;
         std::unordered_map<size_t, BDD_ID> unique_table_map;
-        std::unordered_map<std::size_t, BDD_ID> computed_table;
+        std::unordered_map<size_t, BDD_ID> computed_table;
 
         static size_t hashFunction(BDD_ID f, BDD_ID g, BDD_ID h);
 

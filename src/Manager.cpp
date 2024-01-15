@@ -96,8 +96,9 @@ namespace ClassProject {
         if (i == True() || t == e) return t;
         else if (i == False()) return e;
         else if (t == True() and e == False()) return i;
-        //else if (t == False() and e == True()) return neg(i);
-        else if (!isConstant(t) && !isConstant(e)) { // Standard Triples
+
+        // standard triples
+        else if (!isConstant(t) && !isConstant(e)) {
             // simplification of arguments
             if (i == t) t = True();                // ite (F,F,G) = ite (F,1,G)
             else if (i == e) e = False();          // ite(F,G,F) = ite(F,G,0)
@@ -144,8 +145,8 @@ namespace ClassProject {
         if (r_high == r_low) return r_high; // reduction is possible
 
         r = find_or_add_unique_table(x, r_high, r_low);
+        computed_table.insert({hashFunction(i,t,e), r});
         return r;
-
     }
 
     /**

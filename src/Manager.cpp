@@ -295,7 +295,9 @@ namespace ClassProject {
      * @param nodes_of_root Empty set nodes of root
      */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {  /* NOLINT */
-        nodes_of_root.emplace(root);
+        auto result = nodes_of_root.emplace(root);
+        if(!result.second) // terminate recursion whenever node exists
+            return;
         if (root > True()) {  // terminal case of recursion
             findNodes(coFactorTrue(root), nodes_of_root);
             findNodes(coFactorFalse(root), nodes_of_root);

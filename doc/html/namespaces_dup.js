@@ -1,4 +1,6 @@
 var namespaces_dup =
 [
-    [ "ClassProject", "namespace_class_project.html", "namespace_class_project" ]
+    [ "bench_format", "namespacebench__format.html", "namespacebench__format" ],
+    [ "ClassProject", "namespace_class_project.html", "namespace_class_project" ],
+    [ "skip_p", "namespaceskip__p.html", "namespaceskip__p" ]
 ];

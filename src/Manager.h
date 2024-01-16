@@ -38,6 +38,8 @@ namespace ClassProject {
 
         void swapID (BDD_ID *a, BDD_ID *b);
 
+        void standard_triples(BDD_ID * i, BDD_ID * t, BDD_ID * e);
+
     public:
         Manager();
 

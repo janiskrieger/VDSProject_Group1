@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['utableentry_62',['uTableEntry',['../struct_class_project_1_1u_table_entry.html',1,'ClassProject']]]
+  ['circuit_5fnode_5ft_0',['circuit_node_t',['../structcircuit__node__t.html',1,'']]],
+  ['circuit_5fnode_5ftype_1',['circuit_node_type',['../structcircuit__node__type.html',1,'']]],
+  ['circuittobdd_2',['CircuitToBDD',['../class_circuit_to_b_d_d.html',1,'']]]
 ];

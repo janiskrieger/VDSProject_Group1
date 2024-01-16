@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['setup_46',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]]
+  ['printbdd_0',['PrintBDD',['../class_circuit_to_b_d_d.html#a6587fd53572809b1f21a25f455d857ea',1,'CircuitToBDD']]],
+  ['process_5fmem_5fusage_1',['process_mem_usage',['../_benchmark_lib_8cpp.html#a53bf00b939fe0e94c0ffb23aacb97758',1,'process_mem_usage(double &amp;vm_usage, double &amp;resident_set):&#160;BenchmarkLib.cpp'],['../_benchmark_lib_8h.html#a53bf00b939fe0e94c0ffb23aacb97758',1,'process_mem_usage(double &amp;vm_usage, double &amp;resident_set):&#160;BenchmarkLib.cpp']]]
 ];

@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['gettopvarname_78',['getTopVarName',['../class_class_project_1_1_manager.html#af2dc7afe27497b80c5f1f3f63977f69a',1,'ClassProject::Manager::getTopVarName()'],['../class_class_project_1_1_manager_interface.html#afde45b2065361dfa6e61c1c7bc3fc1b4',1,'ClassProject::ManagerInterface::getTopVarName()']]]
+  ['false_0',['False',['../class_class_project_1_1_manager.html#a6e95dba944ce72f9685f17a7b668f1c8',1,'ClassProject::Manager::False()'],['../class_class_project_1_1_manager_interface.html#ae4f5331132785ad1e418c77d2eb91900',1,'ClassProject::ManagerInterface::False()']]],
+  ['findnodes_1',['findNodes',['../class_class_project_1_1_manager.html#ae8fa8dd136cab3bcc13183106c24896f',1,'ClassProject::Manager::findNodes()'],['../class_class_project_1_1_manager_interface.html#ab460e331ffdb85d4128574b3aae72c1e',1,'ClassProject::ManagerInterface::findNodes()']]],
+  ['findvars_2',['findVars',['../class_class_project_1_1_manager.html#aeead829154e4476de425df06d94773af',1,'ClassProject::Manager::findVars()'],['../class_class_project_1_1_manager_interface.html#ab94feabca2125d334e542e502ae0186d',1,'ClassProject::ManagerInterface::findVars()']]]
 ];

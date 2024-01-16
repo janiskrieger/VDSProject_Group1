@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['visualizebdd_95',['visualizeBDD',['../class_class_project_1_1_manager.html#a1aaa80c8dd2370b4359ba155518110bc',1,'ClassProject::Manager::visualizeBDD()'],['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface::visualizeBDD()']]]
+  ['setup_0',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]],
+  ['skip_5fgrammar_1',['skip_grammar',['../structskip__p_1_1skip__grammar.html#a44b45b3565c9bb3729256c9745b346f4',1,'skip_p::skip_grammar']]]
 ];

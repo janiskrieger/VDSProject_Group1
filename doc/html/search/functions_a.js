@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['uniquetablesize_94',['uniqueTableSize',['../class_class_project_1_1_manager.html#a0724a85292854fe2179b92d6c1aaf2ed',1,'ClassProject::Manager::uniqueTableSize()'],['../class_class_project_1_1_manager_interface.html#a85cac80444b26e5b80eb96b9f1231c0e',1,'ClassProject::ManagerInterface::uniqueTableSize()']]]
+  ['reset_5fpeak_5fmemory_0',['reset_peak_memory',['../_benchmark_lib_8cpp.html#a02e22da60b099d3b16c42a13e153e498',1,'reset_peak_memory():&#160;BenchmarkLib.cpp'],['../_benchmark_lib_8h.html#a02e22da60b099d3b16c42a13e153e498',1,'reset_peak_memory():&#160;BenchmarkLib.cpp']]]
 ];

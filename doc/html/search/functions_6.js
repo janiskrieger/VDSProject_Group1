@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['nand2_85',['nand2',['../class_class_project_1_1_manager.html#a223561e193b8b718420be9982c9ef256',1,'ClassProject::Manager::nand2()'],['../class_class_project_1_1_manager_interface.html#a650bcb03b7be6f306f0c28f3b0fd3299',1,'ClassProject::ManagerInterface::nand2()']]],
-  ['neg_86',['neg',['../class_class_project_1_1_manager.html#a8a2163b4373123d53bc7e4a7073f416d',1,'ClassProject::Manager::neg()'],['../class_class_project_1_1_manager_interface.html#a8e7b062caaef78d651a4057f136709fd',1,'ClassProject::ManagerInterface::neg()']]],
-  ['nor2_87',['nor2',['../class_class_project_1_1_manager.html#ae09155687f57f9f919a7b8f54d7b4739',1,'ClassProject::Manager::nor2()'],['../class_class_project_1_1_manager_interface.html#ad94d6df82dfd51cf8d4d1f5b2b62dca8',1,'ClassProject::ManagerInterface::nor2()']]]
+  ['main_0',['main',['../main__bench_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;main_bench.cpp'],['../main_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;main.cpp'],['../main__test_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;main_test.cpp'],['../main__verify_8cpp.html#a0ddf1224851353fc92bfbff6f499fa97',1,'main(int argc, char *argv[]):&#160;main_verify.cpp']]],
+  ['manager_1',['Manager',['../class_class_project_1_1_manager.html#a85fce20557dc45950ae3493d6f9f14ea',1,'ClassProject::Manager']]],
+  ['matcher_5fp_2',['MATCHER_P',['../namespace_class_project.html#a7bde22f229089847c62f95267eba9072',1,'ClassProject']]],
+  ['memreadstats_3',['memReadStats',['../_benchmark_lib_8cpp.html#aaa74d30a1aa89b753b87c499551d7c88',1,'memReadStats(int field):&#160;BenchmarkLib.cpp'],['../_benchmark_lib_8h.html#aaa74d30a1aa89b753b87c499551d7c88',1,'memReadStats(int field):&#160;BenchmarkLib.cpp']]],
+  ['memusing_4',['memUsing',['../_benchmark_lib_8cpp.html#a9beb77c631874125bf12cffc3eb03eac',1,'memUsing():&#160;BenchmarkLib.cpp'],['../_benchmark_lib_8h.html#a9beb77c631874125bf12cffc3eb03eac',1,'memUsing():&#160;BenchmarkLib.cpp']]]
 ];

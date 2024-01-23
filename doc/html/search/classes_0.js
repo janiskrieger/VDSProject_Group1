@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['manager_59',['Manager',['../class_class_project_1_1_manager.html',1,'ClassProject']]],
-  ['managerinterface_60',['ManagerInterface',['../class_class_project_1_1_manager_interface.html',1,'ClassProject']]],
-  ['managertest_61',['ManagerTest',['../class_class_project_1_1_manager_test.html',1,'ClassProject']]]
+  ['bench_5fnode_5ftype_0',['bench_node_type',['../structbench__format_1_1bench__node__type.html',1,'bench_format']]],
+  ['benchparser_1',['BenchParser',['../class_bench_parser.html',1,'']]]
 ];

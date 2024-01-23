@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['setup_89',['SetUp',['../class_class_project_1_1_manager_test.html#ae38d7652d184750b87bbee74b7a2c8cb',1,'ClassProject::ManagerTest']]]
+  ['or2_0',['or2',['../class_class_project_1_1_manager.html#ae72d444aa17398a80e00de65fc35681a',1,'ClassProject::Manager::or2()'],['../class_class_project_1_1_manager_interface.html#a68e94ee4199e189b0c9243991cd86dfb',1,'ClassProject::ManagerInterface::or2()']]]
 ];

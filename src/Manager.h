@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <unordered_map>
 
 namespace ClassProject {
     struct uTableEntry {
@@ -24,12 +25,20 @@ namespace ClassProject {
     class Manager : public ManagerInterface {
     private:
         std::vector<uTableEntry> unique_table;
+        std::unordered_map<size_t, BDD_ID> unique_table_map;
+        std::unordered_map<size_t, BDD_ID> computed_table;
+
+        static size_t hashFunction(BDD_ID f, BDD_ID g, BDD_ID h);
 
         void init_unique_table();
 
         BDD_ID find_or_add_unique_table(BDD_ID x, BDD_ID high, BDD_ID low);
 
         void print_unique_table();
+
+        void swapID (BDD_ID *a, BDD_ID *b);
+
+        void standard_triples(BDD_ID * i, BDD_ID * t, BDD_ID * e);
 
     public:
         Manager();

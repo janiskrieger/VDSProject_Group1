@@ -1,6 +1,6 @@
 var _tests_8cpp =
 [
-    [ "ManagerTest", "class_class_project_1_1_manager_test.html", "class_class_project_1_1_manager_test" ],
+    [ "ClassProject::ManagerTest", "class_class_project_1_1_manager_test.html", "class_class_project_1_1_manager_test" ],
     [ "MATCHER_P", "_tests_8cpp.html#a7bde22f229089847c62f95267eba9072", null ],
     [ "TEST_F", "_tests_8cpp.html#aca577d9b8071b039f64c4fd67e7f10f1", null ],
     [ "TEST_F", "_tests_8cpp.html#aedcddfc0a3a015d3529daee0620d3f59", null ],

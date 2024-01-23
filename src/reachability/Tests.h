@@ -8,7 +8,7 @@ using namespace ClassProject;
 
 struct ReachabilityTest : testing::Test {
 
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm2 = std::make_unique<ClassProject::Reachability>(2);
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm2 = std::make_unique<ClassProject::Reachability>(2,0);
 
     std::vector<BDD_ID> stateVars2 = fsm2->getStates();
     std::vector<BDD_ID> transitionFunctions;

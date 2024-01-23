@@ -22,4 +22,12 @@ namespace ClassProject {
 
     }
 
+    const std::vector<BDD_ID> &Reachability::getStates() const {
+
+    }
+
+    const std::vector<BDD_ID> &Reachability::getInputs() const {
+
+    }
+
 }

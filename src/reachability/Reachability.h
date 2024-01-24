@@ -7,6 +7,16 @@ namespace ClassProject {
 
     class Reachability : public ReachabilityInterface {
     private:
+        Manager manager = Manager();
+
+        std::vector<BDD_ID> transition_functions;
+        std::vector<bool> initial_state;
+        std::vector<BDD_ID> states;
+        std::vector<BDD_ID> inputs;
+
+        BDD_ID addState(const std::string &label);
+        BDD_ID addInput(const std::string &label);
+
 
     public:
         Reachability(unsigned int stateSize, unsigned int inputSize);

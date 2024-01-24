@@ -8,7 +8,7 @@ using namespace ClassProject;
 
 struct ReachabilityTest : testing::Test {
 
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm2 = std::make_unique<ClassProject::Reachability>(2,0);
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm2 = std::make_unique<ClassProject::Reachability>(2, 0);
 
     std::vector<BDD_ID> stateVars2 = fsm2->getStates();
     std::vector<BDD_ID> transitionFunctions;
@@ -24,12 +24,37 @@ TEST_F(ReachabilityTest, HowTo_Example) { /* NOLINT */
     transitionFunctions.push_back(fsm2->neg(s1)); // s1' = not(s1)
     fsm2->setTransitionFunctions(transitionFunctions);
 
-    fsm2->setInitState({false,false});
+    fsm2->setInitState({false, false});
 
     ASSERT_TRUE(fsm2->isReachable({false, false}));
     ASSERT_FALSE(fsm2->isReachable({false, true}));
     ASSERT_FALSE(fsm2->isReachable({true, false}));
     ASSERT_TRUE(fsm2->isReachable({true, true}));
 }
+
+
+TEST_F(ReachabilityTest, ConstructorRuntimeErrorTest) {
+    EXPECT_THROW(std::make_unique<ClassProject::Reachability>(0, 0), std::runtime_error);
+    EXPECT_THROW(std::make_unique<ClassProject::Reachability>(0, 1), std::runtime_error);
+}
+
+TEST_F(ReachabilityTest, ConstructorIdentityTest) {
+    ASSERT_TRUE(fsm2->isReachable({false, false}));
+    ASSERT_FALSE(fsm2->isReachable({false, true}));
+    ASSERT_FALSE(fsm2->isReachable({true, false}));
+    ASSERT_FALSE(fsm2->isReachable({true, true}));
+}
+
+TEST_F(ReachabilityTest, ConstructorVarTest) {
+    for (int stateSize = 1; stateSize < 5; stateSize++) {
+        for (int inputSize = 0; inputSize < 3; inputSize++) {
+            std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(
+                    stateSize, inputSize);
+            std::vector<BDD_ID> stateVars = fsm->getStates();
+            EXPECT_EQ(stateVars.size(), stateSize + inputSize);
+        }
+    }
+}
+
 
 #endif

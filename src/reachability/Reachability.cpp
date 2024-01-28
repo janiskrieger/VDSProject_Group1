@@ -12,8 +12,9 @@ namespace ClassProject {
         for (unsigned long input = 0; input < inputSize; input++)
             addInput();
 
-        // initialize transition functions
-        for (BDD_ID var = 2; var < manager.uniqueTableSize(); var++) {   // start after constants True() and False()
+        // initialize transition functions //TODO: change to states
+        for (BDD_ID var = Manager::True() + 1;
+             var < manager.uniqueTableSize(); var++) {   // start after constants True() and False()
             trans_function.push_back(var); // set to identity function
         }
         // set initial state to false
@@ -35,17 +36,17 @@ namespace ClassProject {
 
         // evaluate characteristic function of FSM for values given in stateVector
         BDD_ID c = reachableStates();
-        for (unsigned long i = 0; i < stateVector.size(); i++){
+        for (unsigned long i = 0; i < stateVector.size(); i++) {
             if (stateVector[i] == True())
                 c = coFactorTrue(c, states[i]);
             else
                 c = coFactorFalse(c, states[i]);
         }
-        return c;
+        return c == True(); // convert to boolean data type
     }
 
     int Reachability::stateDistance(const std::vector<bool> &stateVector) {
-        return 0;
+        return 0;   // TODO: implement
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) {
@@ -69,7 +70,7 @@ namespace ClassProject {
 
         // convert boolean data type to BDD_ID boolean data type
         for (unsigned long i = 0; i < initial_states.size(); i++)
-            initial_states.push_back(stateVector[i] ? True() : False());
+            initial_states[i] = stateVector[i] ? True() : False();
     }
 
     const std::vector<BDD_ID> &Reachability::getStates() const {
@@ -82,9 +83,9 @@ namespace ClassProject {
 
     BDD_ID Reachability::addState() {
         static unsigned long state = 1;
-        BDD_ID id = manager.createVar("s" + std::to_string(state));
+        BDD_ID id = createVar("s" + std::to_string(state));
         states.push_back(id);
-        id = manager.createVar("s'" + std::to_string(state));
+        id = createVar("s'" + std::to_string(state));
         next_states.push_back(id);
         state++;
         return id;
@@ -92,13 +93,14 @@ namespace ClassProject {
 
     BDD_ID Reachability::addInput() {
         static unsigned long input = 1;
-        BDD_ID id = manager.createVar("x" + std::to_string(input));
+        BDD_ID id = createVar("x" + std::to_string(input));
         inputs.push_back(id);
         input++;
         return id;
     }
 
     BDD_ID Reachability::reachableStates() {
+        // slide 5-10
         BDD_ID tau = transitionRelation(states, inputs, next_states);
         BDD_ID cs0 = characteristicFunction(states, initial_states);
 
@@ -106,17 +108,18 @@ namespace ClassProject {
         cR_it = cs0;
         do {
             cR = cR_it;
-            BDD_ID imgR = img(next_states);
-            // form imgR(s) by renaming of variables s' into s;
-            cR_it = or2(cR, imgR);
+            BDD_ID imgRsp = img(cR, tau);
+            // form imgR(s) by renaming of variables s' into s; // TODO: change s' into s
+            cR_it = or2(cR, imgRsp);
         } while (cR != cR_it);
 
         return cR;
     }
 
     BDD_ID Reachability::transitionRelation(std::vector<BDD_ID> &s, std::vector<BDD_ID> &x, std::vector<BDD_ID> &sp) {
+        // slide 5-4
         // with n-array transition function d(s,x)
-        // tau(s,x,s') = sum (s'i * di(s,x) + ~(s'i) * ~(di(s,x))) from i=1 to n.
+        // tau(s,x,s') = product (s'i * di(s,x) + ~(s'i) * ~(di(s,x))) from i=1 to n.
         BDD_ID tau = True();
         for (unsigned long i = 0; i < s.size(); i++) {
             BDD_ID spi = sp[i];
@@ -128,7 +131,7 @@ namespace ClassProject {
     }
 
     BDD_ID Reachability::characteristicFunction(std::vector<BDD_ID> &vars, std::vector<BDD_ID> &values) {
-        // c = sum of (si == vi) from i=1 to n.
+        // c = product of (si == vi) from i=1 to n.
         // with (a == b) = (a xnor b)
         BDD_ID c;
         for (unsigned long i = 0; i < vars.size(); i++) {
@@ -140,12 +143,14 @@ namespace ClassProject {
     }
 
     BDD_ID Reachability::existential_quantification(BDD_ID func, BDD_ID var) {
+        // slide 5-5
         // ∃xf = f|x=1 + f|x=0
         BDD_ID f = or2(coFactorTrue(func, var), coFactorFalse(func, var));
         return f;
     }
 
     BDD_ID Reachability::existential_quantification(BDD_ID func, const std::vector<BDD_ID> &vars) {
+        // slide 5-6
         // ∃vi ∈V f = ∃v f = ∃v1 ∃v2 ... ∃vn f
         BDD_ID f = func;
         for (BDD_ID var: vars) {
@@ -154,11 +159,10 @@ namespace ClassProject {
         return f;
     }
 
-    BDD_ID Reachability::img(std::vector<BDD_ID> &stateVector) {
-        // imgS(s') = ∃x ∃s cS(s) ⋅ τ(s, x, s')
-        BDD_ID cs = characteristicFunction(states, next_states);
-        BDD_ID tau = transitionRelation(states, inputs, next_states);
-        BDD_ID f = and2(cs, tau);
+    BDD_ID Reachability::img(BDD_ID cR, BDD_ID tau) {
+        // slide 5-8
+        // imgR(s') := ∃x ∃s cR(s) ⋅ τ(s, x, s')
+        BDD_ID f = and2(cR, tau);
         BDD_ID img = existential_quantification(existential_quantification(f, states), inputs);
 
         return img;

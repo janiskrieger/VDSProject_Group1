@@ -19,7 +19,7 @@ namespace ClassProject {
 
         BDD_ID addInput();
 
-        BDD_ID reachableStates();
+        BDD_ID reachableStates();   // symb_compute_reachable_states()
 
         BDD_ID transitionRelation(std::vector<BDD_ID> &s, std::vector<BDD_ID> &x, std::vector<BDD_ID> &sp);
 
@@ -29,7 +29,7 @@ namespace ClassProject {
 
         BDD_ID existential_quantification(BDD_ID func, const std::vector<BDD_ID>& vars);
 
-        BDD_ID img(std::vector<BDD_ID> &states);
+        BDD_ID img(BDD_ID cR, BDD_ID tau);
 
 
     public:

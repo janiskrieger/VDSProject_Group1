@@ -31,6 +31,9 @@ TEST_F(ReachabilityTest, HowTo_Example) { /* NOLINT */
 
 
 TEST_F(ReachabilityTest, ConstructorRuntimeErrorTest) {
+    /*
+     * Test if runtime errors are thrown whenever invalid inputs are given
+     */
     EXPECT_THROW(std::make_unique<ClassProject::Reachability>(0, 0), std::runtime_error);
     EXPECT_THROW(std::make_unique<ClassProject::Reachability>(0, 1), std::runtime_error);
     BDD_ID s0 = stateVars2.at(0);
@@ -39,14 +42,14 @@ TEST_F(ReachabilityTest, ConstructorRuntimeErrorTest) {
     // test for one missing transition function
     transitionFunctions.push_back(fsm2->neg(s0));
     EXPECT_THROW(fsm2->setTransitionFunctions(transitionFunctions), std::runtime_error);
-
     // test invalid BDD_ID
     transitionFunctions.push_back((BDD_ID) 999);
     EXPECT_THROW(fsm2->setTransitionFunctions(transitionFunctions), std::runtime_error);
     transitionFunctions.pop_back();
 
-    // test for one additional transition function
     transitionFunctions.push_back(fsm2->neg(s1));
+
+    // test for one additional transition function
     transitionFunctions.push_back(fsm2->neg(s1));
     EXPECT_THROW(fsm2->setTransitionFunctions(transitionFunctions), std::runtime_error);
     transitionFunctions.pop_back();
@@ -55,7 +58,6 @@ TEST_F(ReachabilityTest, ConstructorRuntimeErrorTest) {
 
     // test for one missing initial state
     EXPECT_THROW(fsm2->setInitState({false}), std::runtime_error);
-
     // test for one additional initial state
     EXPECT_THROW(fsm2->setInitState({false, false, false}), std::runtime_error);
 
@@ -63,12 +65,14 @@ TEST_F(ReachabilityTest, ConstructorRuntimeErrorTest) {
 
     // test for one missing state
     EXPECT_THROW(fsm2->isReachable({false}), std::runtime_error);
-
     // test for one additional state
     EXPECT_THROW(fsm2->isReachable({false, false, false}), std::runtime_error);
 }
 
 TEST_F(ReachabilityTest, ConstructorIdentityTest) {
+    /*
+     * Test if only the initial state is reachable by default
+     */
     ASSERT_TRUE(fsm2->isReachable({false, false}));
     ASSERT_FALSE(fsm2->isReachable({false, true}));
     ASSERT_FALSE(fsm2->isReachable({true, false}));
@@ -76,6 +80,9 @@ TEST_F(ReachabilityTest, ConstructorIdentityTest) {
 }
 
 TEST_F(ReachabilityTest, ConstructorVarTest) {
+    /*
+     * Test if the constructor generates the given states
+     */
     int stateSize = 1;
     int inputSize = 5;
     std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize,

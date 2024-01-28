@@ -78,16 +78,23 @@ namespace ClassProject {
         return inputs;
     }
 
+    /**
+     * Creates variables for a new current and next state
+     * @return BDD_ID of current state
+     */
     BDD_ID Reachability::addState() {
         static unsigned long state = 1;
         BDD_ID id = createVar("s" + std::to_string(state));
         states.push_back(id);
-        id = createVar("s'" + std::to_string(state));
-        next_states.push_back(id);
+        next_states.push_back(createVar("s'" + std::to_string(state)));
         state++;
         return id;
     }
 
+    /**
+     *  Creates variables for an input
+     * @return
+     */
     BDD_ID Reachability::addInput() {
         static unsigned long input = 1;
         BDD_ID id = createVar("x" + std::to_string(input));
@@ -96,6 +103,10 @@ namespace ClassProject {
         return id;
     }
 
+    /**
+     * Implements the symb_compute_reachable_states and symbolically computes all reachable states
+     * @return characteristic function of reachable states
+     */
     BDD_ID Reachability::reachableStates() {
         // slide 5-10
         BDD_ID tau = transitionRelation(states, inputs, next_states);
@@ -112,6 +123,13 @@ namespace ClassProject {
         return cR;
     }
 
+    /**
+     * Calculates the  transition relation
+     * @param s     current state
+     * @param x     inputs
+     * @param sp    next states
+     * @return      BDD ID of transition relation
+     */
     BDD_ID Reachability::transitionRelation(std::vector<BDD_ID> &s, std::vector<BDD_ID> &x, std::vector<BDD_ID> &sp) {
         // slide 5-4
         // with n-array transition function d(s,x)
@@ -126,18 +144,30 @@ namespace ClassProject {
         return tau;
     }
 
-    BDD_ID Reachability::characteristicFunction(std::vector<BDD_ID> &vars, std::vector<BDD_ID> &values) {
-        // c = product of (si == vi) from i=1 to n.
+    /**
+     * Calculates the characteristic function of a BDD_ID pair
+     * @param a Variable 1
+     * @param b Variable 2
+     * @return BDD_ID of characteristic function
+     */
+    BDD_ID Reachability::characteristicFunction(std::vector<BDD_ID> &a, std::vector<BDD_ID> &b) {
+        // f = product of (ai == bi) from i=1 to n.
         // with (a == b) = (a xnor b)
-        BDD_ID c = True();
-        for (unsigned long i = 0; i < vars.size(); i++) {
-            BDD_ID var = vars[i];
-            BDD_ID value = values[i];
-            c = and2(c, xnor2(var, value));
+        BDD_ID f = True();
+        for (unsigned long i = 0; i < a.size(); i++) {
+            BDD_ID var = a[i];
+            BDD_ID value = b[i];
+            f = and2(f, xnor2(var, value));
         }
-        return c;
+        return f;
     }
 
+    /**
+     * Computes the existential quantification of a function for a given variable
+     * @param func  Function
+     * @param var   Variable
+     * @return BDD_ID of existential quantification
+     */
     BDD_ID Reachability::existential_quantification(BDD_ID func, BDD_ID var) {
         // slide 5-5
         // ∃xf = f|x=1 + f|x=0
@@ -145,6 +175,12 @@ namespace ClassProject {
         return f;
     }
 
+    /**
+     * Computes the existential quantification of a function for a given set of variables
+     * @param func  Function
+     * @param vars  Set of variables
+     * @return BDD_ID of existential quantification
+     */
     BDD_ID Reachability::existential_quantification(BDD_ID func, const std::vector<BDD_ID> &vars) {
         // slide 5-6
         // ∃vi ∈V f = ∃v f = ∃v1 ∃v2 ... ∃vn f
@@ -154,13 +190,17 @@ namespace ClassProject {
         return f;
     }
 
-    BDD_ID Reachability::img(BDD_ID cR, BDD_ID tau) {
+    /**
+     * Computes the image for a characteristic function and a transistion relation
+     * @param c    characteristic function
+     * @param tau   transistion relation
+     * @return
+     */
+    BDD_ID Reachability::img(BDD_ID c, BDD_ID tau) {
         // slide 5-8
-        // imgR(s') := ∃x ∃s cR(s) ⋅ τ(s, x, s')
-        BDD_ID f = and2(cR, tau);
+        // imgR(s') := ∃x ∃s c(s) ⋅ τ(s, x, s')
+        BDD_ID f = and2(c, tau);
         BDD_ID img = existential_quantification(existential_quantification(f, states), inputs);
-
         return img;
     }
-
 }

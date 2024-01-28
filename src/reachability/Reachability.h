@@ -23,13 +23,13 @@ namespace ClassProject {
 
         BDD_ID transitionRelation(std::vector<BDD_ID> &s, std::vector<BDD_ID> &x, std::vector<BDD_ID> &sp);
 
-        BDD_ID characteristicFunction(std::vector<BDD_ID> &vars, std::vector<BDD_ID> &values);
+        BDD_ID characteristicFunction(std::vector<BDD_ID> &a, std::vector<BDD_ID> &b);
 
         BDD_ID existential_quantification(BDD_ID func, BDD_ID var);
 
         BDD_ID existential_quantification(BDD_ID func, const std::vector<BDD_ID> &vars);
 
-        BDD_ID img(BDD_ID cR, BDD_ID tau);
+        BDD_ID img(BDD_ID c, BDD_ID tau);
 
 
     public:

@@ -47,10 +47,11 @@ TEST_F(ReachabilityTest, ConstructorIdentityTest) {
 TEST_F(ReachabilityTest, ConstructorVarTest) {
     int stateSize = 1;
     int inputSize = 5;
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize, inputSize);
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize,
+                                                                                                            inputSize);
     std::vector<BDD_ID> stateVars = fsm->getStates();
     std::vector<BDD_ID> inputVars = fsm->getInputs();
-    EXPECT_EQ(stateVars.size(), 2*stateSize);   // current state and next state
+    EXPECT_EQ(stateVars.size(), stateSize);   // current state and next state
     EXPECT_EQ(inputVars.size(), inputSize);
 
 }

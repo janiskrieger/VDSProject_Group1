@@ -27,7 +27,7 @@ namespace ClassProject {
 
         BDD_ID existential_quantification(BDD_ID func, BDD_ID var);
 
-        BDD_ID existential_quantification(BDD_ID func, const std::vector<BDD_ID>& vars);
+        BDD_ID existential_quantification(BDD_ID func, const std::vector<BDD_ID> &vars);
 
         BDD_ID img(BDD_ID cR, BDD_ID tau);
 

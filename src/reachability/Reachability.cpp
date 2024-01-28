@@ -109,10 +109,9 @@ namespace ClassProject {
         do {
             cR = cR_it;
             BDD_ID imgRsp = img(cR, tau);
-            // form imgR(s) by renaming of variables s' into s; // TODO: change s' into s
+            // form imgR(s) by renaming of variables s' into s;
             cR_it = or2(cR, imgRsp);
         } while (cR != cR_it);
-
         return cR;
     }
 
@@ -133,7 +132,7 @@ namespace ClassProject {
     BDD_ID Reachability::characteristicFunction(std::vector<BDD_ID> &vars, std::vector<BDD_ID> &values) {
         // c = product of (si == vi) from i=1 to n.
         // with (a == b) = (a xnor b)
-        BDD_ID c;
+        BDD_ID c = True();
         for (unsigned long i = 0; i < vars.size(); i++) {
             BDD_ID var = vars[i];
             BDD_ID value = values[i];
@@ -153,9 +152,8 @@ namespace ClassProject {
         // slide 5-6
         // ∃vi ∈V f = ∃v f = ∃v1 ∃v2 ... ∃vn f
         BDD_ID f = func;
-        for (BDD_ID var: vars) {
+        for (BDD_ID var: vars)
             f = existential_quantification(f, var);
-        }
         return f;
     }
 

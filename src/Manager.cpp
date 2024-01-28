@@ -98,7 +98,7 @@ namespace ClassProject {
         else if (t == True() and e == False()) return i;
         else if (!isConstant(t) && !isConstant(e))
             standard_triples(&i, &t, &e);
-        if (auto search = computed_table.find(hashFunction(i, t, e)); search != computed_table.end()){
+        if (auto search = computed_table.find(hashFunction(i, t, e)); search != computed_table.end()) {
             return search->second;
         }
         // let x be the top-variable of (i, t, e)
@@ -111,7 +111,7 @@ namespace ClassProject {
         if (r_high == r_low) return r_high; // reduction is possible
 
         r = find_or_add_unique_table(x, r_high, r_low);
-        computed_table.insert({hashFunction(i,t,e), r});
+        computed_table.insert({hashFunction(i, t, e), r});
         return r;
     }
 
@@ -262,7 +262,7 @@ namespace ClassProject {
      */
     void Manager::findNodes(const BDD_ID &root, std::set<BDD_ID> &nodes_of_root) {  /* NOLINT */
         auto result = nodes_of_root.emplace(root);
-        if(!result.second) // terminate recursion whenever node exists
+        if (!result.second) // terminate recursion whenever node exists
             return;
         if (root > True()) {  // terminal case of recursion
             findNodes(coFactorTrue(root), nodes_of_root);
@@ -331,7 +331,7 @@ namespace ClassProject {
      */
     BDD_ID Manager::find_or_add_unique_table(ClassProject::BDD_ID x, ClassProject::BDD_ID high,
                                              ClassProject::BDD_ID low) {
-        if (auto search = unique_table_map.find(hashFunction(x, high, low)); search != unique_table_map.end()){
+        if (auto search = unique_table_map.find(hashFunction(x, high, low)); search != unique_table_map.end()) {
             return unique_table[search->second].id;
         }
         BDD_ID id = uniqueTableSize();
@@ -380,9 +380,9 @@ namespace ClassProject {
      * @param b
      */
     void Manager::swapID(BDD_ID *a, BDD_ID *b) {
-            BDD_ID temp = *a;
-            *a = *b;
-            *b = temp;
+        BDD_ID temp = *a;
+        *a = *b;
+        *b = temp;
     }
 
     /**
@@ -409,18 +409,18 @@ namespace ClassProject {
             *i = neg(*i);
             *t = neg(*t);
             swapID(i, t);
-        }else if (*t == False() && *i > *e) {     // ite(F,0,G) = ite(~G,0,~F)
+        } else if (*t == False() && *i > *e) {     // ite(F,0,G) = ite(~G,0,~F)
             *i = neg(*i);
             *e = neg(*e);
             swapID(i, e);
-        }else if (*t == neg(*e) && *i > *t) {   // ite(F,G,~G) = ite(G,F,~F)
+        } else if (*t == neg(*e) && *i > *t) {   // ite(F,G,~G) = ite(G,F,~F)
             swapID(i, t);
             *e = neg(*t);
         }
 
         // complement edges
-        if (*i != *t && *i != *e && *t != *e){    // F != G != H
-            if (*t > *e){                     // ite(F,G,H) = ite(~F,H,G)
+        if (*i != *t && *i != *e && *t != *e) {    // F != G != H
+            if (*t > *e) {                     // ite(F,G,H) = ite(~F,H,G)
                 *i = neg(*i);
                 swapID(t, e);
             }

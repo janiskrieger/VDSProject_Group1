@@ -206,7 +206,7 @@ namespace ClassProject {
      * @param a ID of variable a
      * @return  The ID representing the negation of the given function
      */
-    BDD_ID Manager::neg(BDD_ID a) {
+    BDD_ID Manager::neg(BDD_ID a) { /* NOLINT */
         return ite(a, False(), True());
     }
 

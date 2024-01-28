@@ -12,16 +12,13 @@ namespace ClassProject {
         for (unsigned long input = 0; input < inputSize; input++)
             addInput();
 
-        // initialize transition functions //TODO: change to states
-        for (BDD_ID var = Manager::True() + 1;
-             var < manager.uniqueTableSize(); var++) {   // start after constants True() and False()
-            trans_function.push_back(var); // set to identity function
-        }
-        // set initial state to false
-        for (unsigned long state = 0; state < stateSize + inputSize; state++) {
-            initial_states.push_back(false);
-        }
+        // initialize transition functions
+        for (BDD_ID state: states)
+            trans_function.push_back(state); // set to identity function
 
+        // set initial state to false
+        for (unsigned long state = 0; state < stateSize + inputSize; state++)
+            initial_states.push_back(false);
     }
 
     bool Reachability::isReachable(const std::vector<bool> &stateVector) {

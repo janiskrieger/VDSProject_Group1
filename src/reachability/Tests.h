@@ -13,7 +13,7 @@ struct ReachabilityTest : testing::Test {
     std::vector<BDD_ID> transitionFunctions;
 };
 
-TEST_F(ReachabilityTest, HowTo_Example) { /* NOLINT */
+TEST_F(ReachabilityTest, HowTo_Example) {
     BDD_ID s0 = stateVars2.at(0);
     BDD_ID s1 = stateVars2.at(1);
 
@@ -91,6 +91,25 @@ TEST_F(ReachabilityTest, ConstructorVarTest) {
     std::vector<BDD_ID> inputVars = fsm->getInputs();
     EXPECT_EQ(stateVars.size(), stateSize);   // current state and next state
     EXPECT_EQ(inputVars.size(), inputSize);
+}
+
+TEST_F(ReachabilityTest, StateDistanceTest) {
+    /*
+     * Test if the stateDistance is calculated correctly
+     */
+    BDD_ID s0 = stateVars2.at(0);
+    BDD_ID s1 = stateVars2.at(1);
+
+    transitionFunctions.push_back(fsm2->neg(s1)); // s0' = not(s1)
+    transitionFunctions.push_back(s0);               // s1' = s0
+    fsm2->setTransitionFunctions(transitionFunctions);
+
+    fsm2->setInitState({false, false});
+
+    EXPECT_EQ(fsm2->stateDistance({false, false}), 0);
+    EXPECT_EQ(fsm2->stateDistance({true, false}), 1);
+    EXPECT_EQ(fsm2->stateDistance({true, true}), 2);
+    EXPECT_EQ(fsm2->stateDistance({false, true}), 3);
 }
 
 #endif

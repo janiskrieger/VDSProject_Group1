@@ -3,6 +3,9 @@
 namespace ClassProject {
     Reachability::Reachability(unsigned int stateSize, unsigned int inputSize) : ReachabilityInterface(
             stateSize, inputSize) {
+        compute_distance = false;
+        distance = -1;
+
         if (stateSize == 0)
             throw std::runtime_error("State size cannot be zero");
 
@@ -23,27 +26,36 @@ namespace ClassProject {
 
     bool Reachability::isReachable(const std::vector<bool> &stateVector) {
         // check dimensions
-        std::vector<BDD_ID> values;
+        std::vector<BDD_ID> BDDstateVector;
         if (states.size() != stateVector.size())
             throw std::runtime_error("State space and dimension of given states do not match.");
 
         // convert boolean data type to BDD_ID boolean data type
         for (unsigned long i = 0; i < states.size(); i++)
-            values.push_back(stateVector[i] ? True() : False());
+            BDDstateVector.push_back(stateVector[i] ? True() : False());
 
-        // evaluate characteristic function of FSM for values given in stateVector
-        BDD_ID c = reachableStates();
-        for (unsigned long i = 0; i < stateVector.size(); i++) {
-            if (stateVector[i] == True())
-                c = coFactorTrue(c, states[i]);
-            else
-                c = coFactorFalse(c, states[i]);
-        }
-        return c == True(); // convert to boolean data type
+        BDD_ID f = reachableStates();
+        return eval(f, BDDstateVector);
     }
 
     int Reachability::stateDistance(const std::vector<bool> &stateVector) {
-        return 0;   // TODO: implement
+        compute_distance = true;
+
+        // check dimensions
+        if (states.size() != stateVector.size())
+            throw std::runtime_error("State space and dimension of given states do not match.");
+
+        // convert boolean data type to BDD_ID boolean data type
+        for (unsigned long i = 0; i < states.size(); i++)
+            distance_state.push_back(stateVector[i] ? True() : False());
+
+        // check if it is in initial states
+        BDD_ID cs0 = charactFunc(states, initial_states);
+        if (eval(cs0, distance_state)) return 0;
+
+        reachableStates();
+
+        return distance;
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) {
@@ -104,11 +116,29 @@ namespace ClassProject {
     }
 
     /**
+     * Evaluates a characteristic function of states for a given boolean state vector
+     * @param c             Characteristic function
+     * @param stateVector   boolean state vector
+     * @return
+     */
+    bool Reachability::eval(BDD_ID f, const std::vector<BDD_ID> &stateVector) {
+        for (unsigned long i = 0; i < stateVector.size(); i++) {
+            BDD_ID x = states[i];
+            if (stateVector[i] == True())
+                f = coFactorTrue(f, x);
+            else
+                f = coFactorFalse(f, x);
+        }
+        return f == True(); // convert to boolean data type
+    }
+
+    /**
      * Implements the symb_compute_reachable_states and symbolically computes all reachable states
      * @return characteristic function of reachable states
      */
     BDD_ID Reachability::reachableStates() {
         // slide 5-10
+        int cnt = 0;
         BDD_ID tau = transitionRelation(states, inputs, next_states);
         BDD_ID cs0 = charactFunc(states, initial_states);
 
@@ -122,6 +152,15 @@ namespace ClassProject {
             // imgR(s) = ∃s' (s == s') ⋅ imgR(s')
             BDD_ID imgR = existQuant(and2(charactFunc(states, next_states), imgRsp), next_states);
             cR_it = or2(cR, imgR);
+
+            // compute state distance
+            if (compute_distance){
+                if (eval(cR, distance_state)){
+                    if(distance < 0 || cnt < distance)
+                        distance = cnt;
+                }
+                cnt++;
+            }
         } while (cR != cR_it);
         return cR;
     }
@@ -191,20 +230,5 @@ namespace ClassProject {
         for (BDD_ID var: vars)
             f = existQuant(f, var);
         return f;
-    }
-
-    /**
-     * Computes the image for a characteristic function and a transition relation
-     * @param c    characteristic function
-     * @param tau   transition relation
-     * @return
-     */
-    BDD_ID Reachability::img(BDD_ID f) {
-        // slide 5-8
-        // img() := ∃x ∃s ∃s' f
-        BDD_ID img = existQuant(
-                existQuant(
-                        existQuant(f, next_states), states), inputs);
-        return img;
     }
 }

@@ -9,15 +9,21 @@ namespace ClassProject {
     private:
         Manager manager = Manager();
 
+        bool compute_distance;
+        int distance{};
+
         std::vector<BDD_ID> initial_states;
         std::vector<BDD_ID> trans_function;
         std::vector<BDD_ID> states;
         std::vector<BDD_ID> next_states;
         std::vector<BDD_ID> inputs;
+        std::vector<BDD_ID> distance_state;
 
         BDD_ID addState();
 
         BDD_ID addInput();
+
+        bool eval(BDD_ID f, const std::vector<BDD_ID> &stateVector);
 
         BDD_ID reachableStates();   // symb_compute_reachable_states()
 
@@ -28,9 +34,6 @@ namespace ClassProject {
         BDD_ID existQuant(BDD_ID func, BDD_ID var);
 
         BDD_ID existQuant(BDD_ID func, const std::vector<BDD_ID> &vars);
-
-        BDD_ID img(BDD_ID f);
-
 
     public:
         Reachability(unsigned int stateSize, unsigned int inputSize);

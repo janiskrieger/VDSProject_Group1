@@ -3,8 +3,10 @@
 namespace ClassProject {
     Reachability::Reachability(unsigned int stateSize, unsigned int inputSize) : ReachabilityInterface(
             stateSize, inputSize) {
+        iter_cnt = 0;
+        min_dist = -1;
+        state_vector = {};
         compute_distance = false;
-        distance = -1;
 
         if (stateSize == 0)
             throw std::runtime_error("State size cannot be zero");
@@ -39,7 +41,9 @@ namespace ClassProject {
     }
 
     int Reachability::stateDistance(const std::vector<bool> &stateVector) {
-        compute_distance = true;
+        min_dist = -1;
+        iter_cnt = 0;
+        state_vector = {};
 
         // check dimensions
         if (states.size() != stateVector.size())
@@ -47,15 +51,13 @@ namespace ClassProject {
 
         // convert boolean data type to BDD_ID boolean data type
         for (unsigned long i = 0; i < states.size(); i++)
-            distance_state.push_back(stateVector[i] ? True() : False());
+            state_vector.push_back(stateVector[i] ? True() : False());
 
-        // check if it is in initial states
-        BDD_ID cs0 = charactFunc(states, initial_states);
-        if (eval(cs0, distance_state)) return 0;
-
+        compute_distance = true;
         reachableStates();
+        compute_distance = false;
 
-        return distance;
+        return min_dist;
     }
 
     void Reachability::setTransitionFunctions(const std::vector<BDD_ID> &transitionFunctions) {
@@ -138,7 +140,6 @@ namespace ClassProject {
      */
     BDD_ID Reachability::reachableStates() {
         // slide 5-10
-        int cnt = 0;
         BDD_ID tau = transitionRelation(states, inputs, next_states);
         BDD_ID cs0 = charactFunc(states, initial_states);
 
@@ -146,21 +147,19 @@ namespace ClassProject {
         cR_it = cs0;
         do {
             cR = cR_it;
+            // compute state distance
+            // Checks initial state. Last state is also taken into account because of loop saturation
+            if (compute_distance)
+                computeDistance(cR);
+
+
             // imgR(s') := ∃x ∃s cR(s) ⋅ τ(s, x, s');
             BDD_ID imgRsp = existQuant(existQuant(and2(cR, tau), states), inputs);
             // form imgR(s) by renaming of variables s' into s;
             // imgR(s) = ∃s' (s == s') ⋅ imgR(s')
             BDD_ID imgR = existQuant(and2(charactFunc(states, next_states), imgRsp), next_states);
             cR_it = or2(cR, imgR);
-
-            // compute state distance
-            if (compute_distance){
-                if (eval(cR, distance_state)){
-                    if(distance < 0 || cnt < distance)
-                        distance = cnt;
-                }
-                cnt++;
-            }
+            iter_cnt++;
         } while (cR != cR_it);
         return cR;
     }
@@ -230,5 +229,21 @@ namespace ClassProject {
         for (BDD_ID var: vars)
             f = existQuant(f, var);
         return f;
+    }
+
+    /**
+     * Called iteratively by the reachableStates methods. Checks if desired state is reachable and updates the shortest
+     * distance.
+     * @param cR    Characteristic function
+     * @return      distance
+     */
+    int Reachability::computeDistance(BDD_ID cR) {
+        bool isReachable = eval(cR, state_vector);
+        if (isReachable) {
+            int distance = iter_cnt;
+            if (min_dist < 0 || distance < min_dist)
+                min_dist = distance;
+        }
+        return min_dist;
     }
 }

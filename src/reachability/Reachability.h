@@ -7,17 +7,17 @@ namespace ClassProject {
 
     class Reachability : public ReachabilityInterface {
     private:
-        Manager manager = Manager();
-
+        int iter_cnt, min_dist;
         bool compute_distance;
-        int distance{};
+
+        Manager manager = Manager();
 
         std::vector<BDD_ID> initial_states;
         std::vector<BDD_ID> trans_function;
         std::vector<BDD_ID> states;
         std::vector<BDD_ID> next_states;
         std::vector<BDD_ID> inputs;
-        std::vector<BDD_ID> distance_state;
+        std::vector<BDD_ID> state_vector;
 
         BDD_ID addState();
 
@@ -34,6 +34,8 @@ namespace ClassProject {
         BDD_ID existQuant(BDD_ID func, BDD_ID var);
 
         BDD_ID existQuant(BDD_ID func, const std::vector<BDD_ID> &vars);
+
+        int computeDistance(BDD_ID cR);
 
     public:
         Reachability(unsigned int stateSize, unsigned int inputSize);

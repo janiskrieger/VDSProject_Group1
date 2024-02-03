@@ -152,7 +152,6 @@ namespace ClassProject {
             if (compute_distance)
                 computeDistance(cR);
 
-
             // imgR(s') := ∃x ∃s cR(s) ⋅ τ(s, x, s');
             BDD_ID imgRsp = existQuant(existQuant(and2(cR, tau), states), inputs);
             // form imgR(s) by renaming of variables s' into s;

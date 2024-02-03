@@ -112,4 +112,30 @@ TEST_F(ReachabilityTest, StateDistanceTest) {
     EXPECT_EQ(fsm2->stateDistance({false, true}), 3);
 }
 
+struct InputReachabilityTest : testing::Test {
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(1, 1);
+
+    std::vector<BDD_ID> stateVars = fsm->getStates();
+    std::vector<BDD_ID> inputVars = fsm->getInputs();
+    std::vector<BDD_ID> transitionFunctions;
+
+    BDD_ID s1 = stateVars[0];
+    BDD_ID x1 = inputVars[0];
+};
+
+TEST_F(InputReachabilityTest, InputTest){
+    int NOT_REACHABLE = -1;
+    // d1 = (!s0)x1
+    transitionFunctions.push_back(fsm->and2(fsm->neg(s1), x1));
+    fsm->setTransitionFunctions(transitionFunctions);
+
+    fsm->setInitState({false, false});
+    EXPECT_TRUE(fsm->isReachable({false}));
+    EXPECT_FALSE(fsm->isReachable({true}));
+
+    fsm->setInitState({false, true});
+    EXPECT_TRUE(fsm->isReachable({false}));
+    EXPECT_TRUE(fsm->isReachable({true}));
+}
+
 #endif

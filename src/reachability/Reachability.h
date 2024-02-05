@@ -32,8 +32,6 @@ namespace ClassProject {
 
         BDD_ID charactFunc(std::vector<BDD_ID> &a, std::vector<BDD_ID> &b);
 
-        BDD_ID existQuant(BDD_ID func, BDD_ID var);
-
         BDD_ID existQuant(BDD_ID func, const std::vector<BDD_ID> &vars);
 
         int computeDistance(BDD_ID cR);

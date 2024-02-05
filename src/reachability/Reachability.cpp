@@ -31,12 +31,13 @@ namespace ClassProject {
     bool Reachability::isReachable(const std::vector<bool> &stateVector) {
         // check dimensions
         std::vector<BDD_ID> BDDstateVector;
+        BDDstateVector.insert(BDDstateVector.end(), initial_states.begin(), initial_states.end());
         if (states.size() != stateVector.size())
             throw std::runtime_error("State space and dimension of given states do not match.");
 
         // convert boolean data type to BDD_ID boolean data type
         for (unsigned long i = 0; i < states.size(); i++)
-            BDDstateVector.push_back(stateVector[i] ? True() : False());
+            BDDstateVector[i] = stateVector[i] ? True() : False();
 
         BDD_ID f = reachableStates();
         return eval(f, BDDstateVector);
@@ -117,7 +118,7 @@ namespace ClassProject {
      */
     bool Reachability::eval(BDD_ID f, const std::vector<BDD_ID> &stateVector) {
         for (unsigned long i = 0; i < stateVector.size(); i++) {
-            BDD_ID x = states[i];
+            BDD_ID x = states_and_inputs[i];
             if (stateVector[i] == True())
                 f = coFactorTrue(f, x);
             else
@@ -144,7 +145,8 @@ namespace ClassProject {
                 computeDistance(cR);
 
             // imgR(s') := ∃x ∃s cR(s) ⋅ τ(s, x, s');
-            BDD_ID imgRsp = existQuant(existQuant(and2(cR, tau), states), inputs);
+            // BDD_ID imgRsp = existQuant(existQuant(and2(cR, tau), states), inputs);
+            BDD_ID imgRsp = existQuant(and2(cR, tau), states);
             // form imgR(s) by renaming of variables s' into s;
             // imgR(s) = ∃s' (s == s') ⋅ imgR(s')
             BDD_ID imgR = existQuant(and2(charactFunc(states, next_states), imgRsp), next_states);
@@ -189,18 +191,6 @@ namespace ClassProject {
             BDD_ID value = b[i];
             f = and2(f, xnor2(var, value));
         }
-        return f;
-    }
-
-    /**
-     * Computes the existential quantification of a function for a given variable
-     * @param func  Function
-     * @param var   Variable
-     * @return BDD_ID of existential quantification
-     */
-    BDD_ID Reachability::existQuant(BDD_ID func, BDD_ID var) {
-        // ∃xf = f|x=1 + f|x=0
-        BDD_ID f = or2(coFactorTrue(func, var), coFactorFalse(func, var));
         return f;
     }
 

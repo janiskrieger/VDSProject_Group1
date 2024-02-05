@@ -9,11 +9,16 @@ var hierarchy =
       [ "skip_p::skip_grammar< Iterator >", "structskip__p_1_1skip__grammar.html", null ]
     ] ],
     [ "ClassProject::ManagerInterface", "class_class_project_1_1_manager_interface.html", [
-      [ "ClassProject::Manager", "class_class_project_1_1_manager.html", null ]
+      [ "ClassProject::Manager", "class_class_project_1_1_manager.html", [
+        [ "ClassProject::ReachabilityInterface", "class_class_project_1_1_reachability_interface.html", [
+          [ "ClassProject::Reachability", "class_class_project_1_1_reachability.html", null ]
+        ] ]
+      ] ]
     ] ],
     [ "node", "structnode.html", null ],
     [ "testing::Test", null, [
-      [ "ClassProject::ManagerTest", "class_class_project_1_1_manager_test.html", null ]
+      [ "ClassProject::ManagerTest", "class_class_project_1_1_manager_test.html", null ],
+      [ "ReachabilityTest", "struct_reachability_test.html", null ]
     ] ],
     [ "ClassProject::uTableEntry", "struct_class_project_1_1u_table_entry.html", null ]
 ];

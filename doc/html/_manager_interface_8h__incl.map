@@ -1,7 +1,5 @@
 <map id="src/ManagerInterface.h" name="src/ManagerInterface.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,177,33"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="26,81,84,109"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="87,35,71,68,66,66,82,32"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="108,81,149,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="100,32,117,66,113,68,95,35"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,5,177,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="25,80,83,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="107,80,150,107"/>
 </map>

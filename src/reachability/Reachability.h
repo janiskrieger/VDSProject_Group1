@@ -17,11 +17,12 @@ namespace ClassProject {
         std::vector<BDD_ID> states;
         std::vector<BDD_ID> next_states;
         std::vector<BDD_ID> inputs;
+        std::vector<BDD_ID> states_and_inputs;
         std::vector<BDD_ID> state_vector;
 
-        BDD_ID addState();
+        void addState();
 
-        BDD_ID addInput();
+        void addInput();
 
         bool eval(BDD_ID f, const std::vector<BDD_ID> &stateVector);
 

@@ -123,13 +123,12 @@ struct InputReachabilityTest : testing::Test {
     BDD_ID x1 = inputVars[0];
 };
 
-TEST_F(InputReachabilityTest, InputTest){
-    int NOT_REACHABLE = -1;
-    // d1 = (!s0)x1
+TEST_F(InputReachabilityTest, InputTest) {
     transitionFunctions.push_back(fsm->and2(fsm->neg(s1), x1));
     fsm->setTransitionFunctions(transitionFunctions);
 
     fsm->setInitState({false, false});
+
     EXPECT_TRUE(fsm->isReachable({false}));
     EXPECT_FALSE(fsm->isReachable({true}));
 

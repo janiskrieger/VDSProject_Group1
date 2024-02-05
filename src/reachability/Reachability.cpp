@@ -16,6 +16,8 @@ namespace ClassProject {
             addState();
         for (unsigned long input = 0; input < inputSize; input++)
             addInput();
+        states_and_inputs.insert(states_and_inputs.end(), states.begin(), states.end());
+        states_and_inputs.insert(states_and_inputs.end(), inputs.begin(), inputs.end());
 
         // initialize transition functions
         for (BDD_ID state: states)
@@ -23,7 +25,7 @@ namespace ClassProject {
 
         // set initial state to false
         for (unsigned long state = 0; state < stateSize + inputSize; state++)
-            initial_states.push_back(false);
+            initial_states.push_back(Manager::False());
     }
 
     bool Reachability::isReachable(const std::vector<bool> &stateVector) {
@@ -94,27 +96,17 @@ namespace ClassProject {
 
     /**
      * Creates variables for a new current and next state
-     * @return BDD_ID of current state
      */
-    BDD_ID Reachability::addState() {
-        static unsigned long state = 1;
-        BDD_ID id = createVar("s" + std::to_string(state));
-        states.push_back(id);
-        next_states.push_back(createVar("s'" + std::to_string(state)));
-        state++;
-        return id;
+    void Reachability::addState() {
+        states.push_back(createVar(""));
+        next_states.push_back(createVar(""));
     }
 
     /**
      * Creates variables for an input
-     * @return
      */
-    BDD_ID Reachability::addInput() {
-        static unsigned long input = 1;
-        BDD_ID id = createVar("x" + std::to_string(input));
-        inputs.push_back(id);
-        input++;
-        return id;
+    void Reachability::addInput() {
+        inputs.push_back(createVar(""));
     }
 
     /**
@@ -139,9 +131,8 @@ namespace ClassProject {
      * @return characteristic function of reachable states
      */
     BDD_ID Reachability::reachableStates() {
-        // slide 5-10
         BDD_ID tau = transitionRelation(states, inputs, next_states);
-        BDD_ID cs0 = charactFunc(states, initial_states);
+        BDD_ID cs0 = charactFunc(states_and_inputs, initial_states);
 
         BDD_ID cR, cR_it;
         cR_it = cs0;
@@ -171,7 +162,6 @@ namespace ClassProject {
      * @return      BDD ID of transition relation
      */
     BDD_ID Reachability::transitionRelation(std::vector<BDD_ID> &s, std::vector<BDD_ID> &x, std::vector<BDD_ID> &sp) {
-        // slide 5-4
         // with n-array transition function d(s,x)
         // tau(s,x,s') = product (s'i * di(s,x) + ~(s'i) * ~(di(s,x))) from i=1 to n.
         BDD_ID tau = True();
@@ -209,7 +199,6 @@ namespace ClassProject {
      * @return BDD_ID of existential quantification
      */
     BDD_ID Reachability::existQuant(BDD_ID func, BDD_ID var) {
-        // slide 5-5
         // ∃xf = f|x=1 + f|x=0
         BDD_ID f = or2(coFactorTrue(func, var), coFactorFalse(func, var));
         return f;
@@ -222,11 +211,10 @@ namespace ClassProject {
      * @return BDD_ID of existential quantification
      */
     BDD_ID Reachability::existQuant(BDD_ID func, const std::vector<BDD_ID> &vars) {
-        // slide 5-6
         // ∃vi ∈V f = ∃v f = ∃v1 ∃v2 ... ∃vn f
         BDD_ID f = func;
         for (BDD_ID var: vars)
-            f = existQuant(f, var);
+            f = or2(coFactorTrue(f, var), coFactorFalse(f, var));
         return f;
     }
 

@@ -136,4 +136,57 @@ TEST_F(ReachabilityTest, SingleInputTest) {
     EXPECT_TRUE(fsm->isReachable({true}));
 }
 
+TEST_F(ReachabilityTest, DualInputTest) {
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(2, 2);
+    std::vector<BDD_ID> stateVars = fsm->getStates();
+    std::vector<BDD_ID> inputVars = fsm->getInputs();
+    std::vector<BDD_ID> transitionFunctions;
+    BDD_ID s1 = stateVars.at(0);
+    BDD_ID s2 = stateVars.at(1);
+    BDD_ID x1 = inputVars.at(0);
+    BDD_ID x2 = inputVars.at(1);
+
+    const int NOT_REACHABLE = -1;
+    // d1 = (!s1)s2 + s1(!s2) = s1 xor s2
+    transitionFunctions.push_back(fsm->xor2(s1, s2));
+    // d2 = (!s1)(!s2)x1 + (!x1)s2x2 + s1(!s2)
+    BDD_ID f1 = fsm->and2(fsm->neg(s1), fsm->and2(fsm->neg(s2), x1));
+    BDD_ID f2 = fsm->and2(fsm->neg(s1), fsm->and2(s2, x2));
+    BDD_ID f3 = fsm->and2(s1, fsm->neg(s2));
+    transitionFunctions.push_back(fsm->or2(f1, fsm->or2(f2, f3)));
+    fsm->setTransitionFunctions(transitionFunctions);
+
+    fsm->setInitState({false, false, false, false});
+    EXPECT_TRUE(fsm->isReachable({false, false}));
+    EXPECT_FALSE(fsm->isReachable({false, true}));
+    EXPECT_FALSE(fsm->isReachable({true, false}));
+    EXPECT_FALSE(fsm->isReachable({true, true}));
+    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
+    EXPECT_EQ(fsm->stateDistance({true, true}), NOT_REACHABLE);
+
+    fsm->setInitState({false, false, false, true});
+    EXPECT_TRUE(fsm->isReachable({false, false}));
+    EXPECT_FALSE(fsm->isReachable({false, true}));
+    EXPECT_FALSE(fsm->isReachable({true, false}));
+    EXPECT_FALSE(fsm->isReachable({true, true}));
+    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
+    EXPECT_EQ(fsm->stateDistance({true, true}), NOT_REACHABLE);
+
+    fsm->setInitState({false, false, true, false});
+    EXPECT_TRUE(fsm->isReachable({false, false}));
+    EXPECT_TRUE(fsm->isReachable({false, true}));
+    EXPECT_TRUE(fsm->isReachable({true, false}));
+    EXPECT_TRUE(fsm->isReachable({true, true}));
+    EXPECT_EQ(fsm->stateDistance({true, false}), 2);
+    EXPECT_EQ(fsm->stateDistance({true, true}), 3);
+
+    fsm->setInitState({false, false, true, true});
+    EXPECT_TRUE(fsm->isReachable({false, false}));
+    EXPECT_TRUE(fsm->isReachable({false, true}));
+    EXPECT_FALSE(fsm->isReachable({true, false}));
+    EXPECT_TRUE(fsm->isReachable({true, true}));
+    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
+    EXPECT_EQ(fsm->stateDistance({true, true}), 2);
+}
+
 #endif

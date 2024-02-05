@@ -47,6 +47,7 @@ namespace ClassProject {
         min_dist = -1;
         iter_cnt = 0;
         state_vector = {};
+        state_vector.insert(state_vector.end(), initial_states.begin(), initial_states.end());
 
         // check dimensions
         if (states.size() != stateVector.size())
@@ -54,7 +55,7 @@ namespace ClassProject {
 
         // convert boolean data type to BDD_ID boolean data type
         for (unsigned long i = 0; i < states.size(); i++)
-            state_vector.push_back(stateVector[i] ? True() : False());
+            state_vector[i] = stateVector[i] ? True() : False();
 
         compute_distance = true;
         reachableStates();

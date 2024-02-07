@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['var_5fname_0',['var_name',['../structnode.html#a6a26f5e7101293a34704c34ab2b8846f',1,'node']]],
-  ['visualizebdd_1',['visualizeBDD',['../class_class_project_1_1_manager.html#a1aaa80c8dd2370b4359ba155518110bc',1,'ClassProject::Manager::visualizeBDD()'],['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface::visualizeBDD()']]]
+  ['var_5fname_131',['var_name',['../structnode.html#a6a26f5e7101293a34704c34ab2b8846f',1,'node']]],
+  ['visualizebdd_132',['visualizeBDD',['../class_class_project_1_1_manager.html#a1aaa80c8dd2370b4359ba155518110bc',1,'ClassProject::Manager::visualizeBDD()'],['../class_class_project_1_1_manager_interface.html#a61d18e20e84ded068d71a2c755d0ed16',1,'ClassProject::ManagerInterface::visualizeBDD()']]]
 ];

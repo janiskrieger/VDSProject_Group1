@@ -1,7 +1,5 @@
 <map id="src/bench/CircuitToBDD.hpp" name="src/bench/CircuitToBDD.hpp">
-<area shape="rect" id="Node000001" title=" " alt="" coords="114,5,315,33"/>
-<area shape="rect" id="Node000002" href="$_circuit_to_b_d_d_8cpp.html" title=" " alt="" coords="5,81,205,109"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,44,126,83,123,78,181,40"/>
-<area shape="rect" id="Node000003" href="$main__bench_8cpp.html" title=" " alt="" coords="228,81,422,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="248,39,307,78,304,83,245,44"/>
+<area shape="rect" id="node1" title=" " alt="" coords="115,5,317,32"/>
+<area shape="rect" id="node2" href="$_circuit_to_b_d_d_8cpp.html" title=" " alt="" coords="5,80,205,107"/>
+<area shape="rect" id="node3" href="$main__bench_8cpp.html" title=" " alt="" coords="229,80,424,107"/>
 </map>

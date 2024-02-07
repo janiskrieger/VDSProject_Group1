@@ -78,6 +78,16 @@ TEST_F(ReachabilityTest, ConstructorIdentityTest) {
     ASSERT_FALSE(fsm->isReachable({true, true}));
 }
 
+TEST_F(ReachabilityTest, ConstructorDefaultParameterTest) {
+    // test if correct number of state and input variables are created
+    int stateSize = 3;
+    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(stateSize);
+    std::vector<BDD_ID> stateVars = fsm->getStates();
+    std::vector<BDD_ID> inputVars = fsm->getInputs();
+    EXPECT_EQ(stateVars.size(), stateSize);
+    EXPECT_EQ(inputVars.size(), 0);
+}
+
 TEST_F(ReachabilityTest, ConstructorVarTest) {
     // test if correct number of state and input variables are created
     int stateSize = 13;
@@ -91,7 +101,7 @@ TEST_F(ReachabilityTest, ConstructorVarTest) {
 }
 
 TEST_F(ReachabilityTest, isReachableTest) {
-    // test if correct states are reachable
+    // test if correct current_states are reachable
     transitionFunctions.push_back(fsm->neg(s0));
     transitionFunctions.push_back(fsm->neg(s1));
     fsm->setTransitionFunctions(transitionFunctions);
@@ -104,7 +114,7 @@ TEST_F(ReachabilityTest, isReachableTest) {
 }
 
 TEST_F(ReachabilityTest, StateDistanceTest) {
-    // test if computed distance between states matches
+    // test if computed distance between current_states matches
     transitionFunctions.push_back(fsm->neg(s1));
     transitionFunctions.push_back(s0);
     fsm->setTransitionFunctions(transitionFunctions);
@@ -127,66 +137,100 @@ TEST_F(ReachabilityTest, SingleInputTest) {
 
     transitionFunctions.push_back(fsm->and2(fsm->neg(s0), x0));
     fsm->setTransitionFunctions(transitionFunctions);
-    fsm->setInitState({false, false});
+    fsm->setInitState({false});
 
     EXPECT_TRUE(fsm->isReachable({false}));
-    EXPECT_FALSE(fsm->isReachable({true}));
-    fsm->setInitState({false, true});
+    EXPECT_TRUE(fsm->isReachable({true}));
+    fsm->setInitState({true});
     EXPECT_TRUE(fsm->isReachable({false}));
     EXPECT_TRUE(fsm->isReachable({true}));
 }
 
-TEST_F(ReachabilityTest, DualInputTest) {
-    std::unique_ptr<ClassProject::ReachabilityInterface> fsm = std::make_unique<ClassProject::Reachability>(2, 2);
-    std::vector<BDD_ID> stateVars = fsm->getStates();
-    std::vector<BDD_ID> inputVars = fsm->getInputs();
+TEST(Distance_Test, distanceExample) { /* NOLINT */
+    std::unique_ptr<ClassProject::Reachability> distanceFSM = std::make_unique<ClassProject::Reachability>(2,1);
+    std::vector<BDD_ID> stateVars6 = distanceFSM->getStates();
     std::vector<BDD_ID> transitionFunctions;
-    BDD_ID s1 = stateVars.at(0);
-    BDD_ID s2 = stateVars.at(1);
-    BDD_ID x1 = inputVars.at(0);
-    BDD_ID x2 = inputVars.at(1);
 
-    const int NOT_REACHABLE = -1;
-    // d1 = (!s1)s2 + s1(!s2) = s1 xor s2
-    transitionFunctions.push_back(fsm->xor2(s1, s2));
-    // d2 = (!s1)(!s2)x1 + (!x1)s2x2 + s1(!s2)
-    BDD_ID f1 = fsm->and2(fsm->neg(s1), fsm->and2(fsm->neg(s2), x1));
-    BDD_ID f2 = fsm->and2(fsm->neg(s1), fsm->and2(s2, x2));
-    BDD_ID f3 = fsm->and2(s1, fsm->neg(s2));
-    transitionFunctions.push_back(fsm->or2(f1, fsm->or2(f2, f3)));
-    fsm->setTransitionFunctions(transitionFunctions);
+    auto s0 = stateVars6.at(0);
+    auto s1 = stateVars6.at(1);
+    auto inputs = distanceFSM->getInputs();
+    auto i = inputs.at(0);
 
-    fsm->setInitState({false, false, false, false});
-    EXPECT_TRUE(fsm->isReachable({false, false}));
-    EXPECT_FALSE(fsm->isReachable({false, true}));
-    EXPECT_FALSE(fsm->isReachable({true, false}));
-    EXPECT_FALSE(fsm->isReachable({true, true}));
-    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
-    EXPECT_EQ(fsm->stateDistance({true, true}), NOT_REACHABLE);
+    auto nots1 = distanceFSM->neg(s1);
+    auto nots0 = distanceFSM->neg(s0);
+    auto noti = distanceFSM->neg(i);
 
-    fsm->setInitState({false, false, false, true});
-    EXPECT_TRUE(fsm->isReachable({false, false}));
-    EXPECT_FALSE(fsm->isReachable({false, true}));
-    EXPECT_FALSE(fsm->isReachable({true, false}));
-    EXPECT_FALSE(fsm->isReachable({true, true}));
-    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
-    EXPECT_EQ(fsm->stateDistance({true, true}), NOT_REACHABLE);
+    //s0' = not(s1)*not(s0)*not(i) + !s1*s0*!i + s1*!s0*!i
+    auto s0trans = distanceFSM->or2(distanceFSM->or2(distanceFSM->and2(distanceFSM->and2(nots1, nots0), noti), distanceFSM->and2(distanceFSM->and2(nots1, s0), noti)), distanceFSM->and2(distanceFSM->and2(s1, nots0), noti));
+    //s1' = !s1*!s0 + s1*!s0*i + s1s0i
+    auto s1trans = distanceFSM->or2(distanceFSM->or2(distanceFSM->and2(nots1, nots0), distanceFSM->and2(distanceFSM->and2(s1, nots0), i)), distanceFSM->and2(distanceFSM->and2(s1, s0), i));
 
-    fsm->setInitState({false, false, true, false});
-    EXPECT_TRUE(fsm->isReachable({false, false}));
-    EXPECT_TRUE(fsm->isReachable({false, true}));
-    EXPECT_TRUE(fsm->isReachable({true, false}));
-    EXPECT_TRUE(fsm->isReachable({true, true}));
-    EXPECT_EQ(fsm->stateDistance({true, false}), 2);
-    EXPECT_EQ(fsm->stateDistance({true, true}), 3);
+    transitionFunctions.push_back(s0trans);
+    transitionFunctions.push_back(s1trans);
+    //s1' = not(s3) and (s3 or (s3 nand (s0 and s1)))
+    distanceFSM->setTransitionFunctions(transitionFunctions);
+    /*
+     * Reset state A {false, false}
+     * B {false, true}
+     * C {true, false}
+     * D {true, true}
+     * input i
+     *
+     * A, i = 1 -> B
+     * A, i = 0 -> D
+     * B, i = 1 -> B
+     * B, i = 0 -> C
+     * C, i = 1 -> A
+     * C, i = 0 -> C
+     * D, i = 1 -> B
+     * D, i = 0 -> A
+     */
 
-    fsm->setInitState({false, false, true, true});
-    EXPECT_TRUE(fsm->isReachable({false, false}));
-    EXPECT_TRUE(fsm->isReachable({false, true}));
-    EXPECT_FALSE(fsm->isReachable({true, false}));
-    EXPECT_TRUE(fsm->isReachable({true, true}));
-    EXPECT_EQ(fsm->stateDistance({true, false}), NOT_REACHABLE);
-    EXPECT_EQ(fsm->stateDistance({true, true}), 2);
+    distanceFSM->setInitState({false,false});
+    ASSERT_TRUE (distanceFSM->isReachable({true, false}));
+    ASSERT_TRUE (distanceFSM->isReachable({false,  true}));
+    ASSERT_TRUE (distanceFSM->isReachable({true, true}));
+    ASSERT_TRUE (distanceFSM->isReachable({false, false}));
+
+    ASSERT_EQ (distanceFSM->stateDistance({false, false}), 0);
+    ASSERT_EQ (distanceFSM->stateDistance({false, true}), 1);
+    ASSERT_EQ (distanceFSM->stateDistance({true, true}), 1);
+    ASSERT_EQ (distanceFSM->stateDistance({true, false}), 2);
+
+    distanceFSM->setInitState({false,true});
+    ASSERT_TRUE (distanceFSM->isReachable({true, false}));
+    ASSERT_TRUE (distanceFSM->isReachable({false,  true}));
+    ASSERT_TRUE (distanceFSM->isReachable({true, true}));
+    ASSERT_TRUE (distanceFSM->isReachable({false, false}));
+
+    ASSERT_EQ (distanceFSM->stateDistance({false, false}), 2);
+    ASSERT_EQ (distanceFSM->stateDistance({false, true}), 0);
+    ASSERT_EQ (distanceFSM->stateDistance({true, true}), 3);
+    ASSERT_EQ (distanceFSM->stateDistance({true, false}), 1);
+
+
+    distanceFSM->setInitState({true,false});
+    ASSERT_TRUE (distanceFSM->isReachable({true, false}));
+    ASSERT_TRUE (distanceFSM->isReachable({false,  true}));
+    ASSERT_TRUE (distanceFSM->isReachable({true, true}));
+    ASSERT_TRUE (distanceFSM->isReachable({false, false}));
+
+    ASSERT_EQ (distanceFSM->stateDistance({false, false}), 1);
+    ASSERT_EQ (distanceFSM->stateDistance({false, true}), 2);
+    ASSERT_EQ (distanceFSM->stateDistance({true, true}), 2);
+    ASSERT_EQ (distanceFSM->stateDistance({true, false}), 0);
+
+    distanceFSM->setInitState({true,true});
+    ASSERT_TRUE (distanceFSM->isReachable({true, false}));
+    ASSERT_TRUE (distanceFSM->isReachable({false,  true}));
+    ASSERT_TRUE (distanceFSM->isReachable({true, true}));
+    ASSERT_TRUE (distanceFSM->isReachable({false, false}));
+
+    ASSERT_EQ (distanceFSM->stateDistance({false, false}), 1);
+    ASSERT_EQ (distanceFSM->stateDistance({false, true}), 1);
+    ASSERT_EQ (distanceFSM->stateDistance({true, true}), 0);
+    ASSERT_EQ (distanceFSM->stateDistance({true, false}), 2);
+
 }
 
 #endif
